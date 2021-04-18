@@ -1,4 +1,4 @@
-﻿using Library;
+﻿using DS_ProgramingChallengeLibrary;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -48,7 +48,10 @@ namespace ConsoleApp
         {
             // ...
             serviceCollection.AddTransient<IAppService, AppService>();
-            serviceCollection.AddTransient<IBusinessLogic, BusinessLogic>();
+            serviceCollection.AddTransient<IDownloadHandler, DownloadHandler>();
+            serviceCollection.AddTransient<IDecompressorHandler, DecompressorHandler>();
+            serviceCollection.AddTransient<IFileParser, FileParser>();
+            serviceCollection.AddTransient<IOutputResultParser, OutputResultParser>();
         }
     }
 }

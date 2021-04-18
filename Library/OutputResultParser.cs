@@ -7,26 +7,24 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Library
+
+namespace DS_ProgramingChallengeLibrary
 {
-    public class BusinessLogic : IBusinessLogic
+    public class OutputResultParser : IOutputResultParser
     {
         private readonly ILogger _log;
         private readonly IConfiguration _config;
 
-        public BusinessLogic(ILogger<BusinessLogic> log, IConfiguration config)
+        public OutputResultParser(ILogger<OutputResultParser> log, IConfiguration config)
         {
             _log = log;
             _config = config;
         }
-
-        public void ProcessData()
+        public void ShowResultInConsole()
         {
-            for (int i = 0; i < _config.GetValue<int>("LoopTimes"); i++)
-            {
-                // Test - Demo
-                _log.LogInformation("Run number {runNumber}", i);
-            }
+
+            _log.LogInformation("Showing result");
+
         }
     }
 }
