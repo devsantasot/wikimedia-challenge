@@ -1,4 +1,4 @@
-﻿namespace LibraryTemplate
+﻿namespace Library
 {
     public interface IBusinessLogic
     {

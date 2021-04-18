@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LibraryTemplate\LibraryTemplate.csproj" />
+    <ProjectReference Include="..\Library\DS_ProgramingChallengeLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

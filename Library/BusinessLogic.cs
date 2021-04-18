@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace LibraryTemplate
+namespace Library
 {
     public class BusinessLogic : IBusinessLogic
     {

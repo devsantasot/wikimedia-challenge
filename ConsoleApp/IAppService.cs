@@ -1,4 +1,4 @@
-﻿namespace ConsoleAppTemplate
+﻿namespace ConsoleApp
 {
     public interface IAppService
     {

@@ -1,10 +1,10 @@
-﻿using LibraryTemplate;
+﻿using Library;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 // This project use Dependency Injection, Serilog, Settings
 
-namespace ConsoleAppTemplate
+namespace ConsoleApp
 {
     public class AppService : IAppService
     {

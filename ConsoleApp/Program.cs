@@ -7,7 +7,7 @@ using System.IO;
 
 // This project use Dependency Injection, Serilog, Settings
 
-namespace ConsoleAppTemplate
+namespace ConsoleApp
 {
     class Program
     {
