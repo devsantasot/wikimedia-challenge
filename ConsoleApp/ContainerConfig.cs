@@ -48,6 +48,7 @@ namespace ConsoleApp
         {
             // ...
             serviceCollection.AddTransient<IAppService, AppService>();
+            serviceCollection.AddTransient<IDataHandler, DataHandler>();
             serviceCollection.AddTransient<IDownloadHandler, DownloadHandler>();
             serviceCollection.AddTransient<IDecompressorHandler, DecompressorHandler>();
             serviceCollection.AddTransient<IFileParser, FileParser>();

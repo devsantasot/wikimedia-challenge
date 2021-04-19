@@ -21,11 +21,9 @@ namespace DS_ProgramingChallengeLibrary
         }
         public void TransformDataIntoDataTable()
         {
-
             _log.LogInformation("Transforming Data");
 
             _log.LogInformation("Transformed.");
         }
-
     }
 }

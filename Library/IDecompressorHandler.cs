@@ -2,6 +2,6 @@
 {
     public interface IDecompressorHandler
     {
-        void DecompressDownloadedFiles();
+        void DecompressFile(string FileNamePath);
     }
 }

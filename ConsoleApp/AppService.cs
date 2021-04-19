@@ -8,27 +8,19 @@ namespace ConsoleApp
 {
     public class AppService : IAppService
     {
-        private readonly IDownloadHandler _downloadHandler;
-        private readonly IDecompressorHandler _decompressorHandler;
-        private readonly IFileParser _fileParser;
+        private readonly IDataHandler _dataHandler;
         private readonly IOutputResultParser _resultParser;
 
-        public AppService(IDownloadHandler downloadHandler,
-                          IDecompressorHandler decompressorHandler,
-                          IFileParser fileParser,
+        public AppService(IDataHandler dataHandler,
                           IOutputResultParser resultParser)
         {
-            _downloadHandler = downloadHandler;
-            _decompressorHandler = decompressorHandler;
-            _fileParser = fileParser;
+            _dataHandler = dataHandler;
             _resultParser = resultParser;
         }
 
         public void Run()
         {
-            _downloadHandler.DownloadData();
-            _decompressorHandler.DecompressDownloadedFiles();
-            _fileParser.TransformDataIntoDataTable();
+            _dataHandler.DownloadAndProcessData();
             _resultParser.ShowResultInConsole();
         }
     }
