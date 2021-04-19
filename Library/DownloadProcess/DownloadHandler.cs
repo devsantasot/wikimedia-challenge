@@ -15,26 +15,31 @@ namespace DS_ProgramingChallengeLibrary
     {
         private readonly ILogger _log;
         private readonly IConfiguration _config;
-        private readonly IDecompressorHandler _decompressorHandler;
 
-        public DownloadHandler(ILogger<DownloadHandler> log, IConfiguration config, IDecompressorHandler decompressorHandler)
+        public DownloadHandler(ILogger<DownloadHandler> log, IConfiguration config)
         {
             _log = log;
             _config = config;
-            _decompressorHandler = decompressorHandler;
         }
 
-        public void DownloadData(DateTime dateTimeFileName, int fileHourIndex)
+        public void DownloadData()
         {
-            DownloadHelper downloadHelper = new DownloadHelper(_config, dateTimeFileName, fileHourIndex);
-            using (WebClient client = new WebClient())
-            {
-                _log.LogInformation("Downloading Data from {uri} (chunk #{index}) ", downloadHelper.Address.AbsoluteUri, fileHourIndex);
-                client.DownloadFile(downloadHelper.Address, downloadHelper.FileNamePath);
-            }
-            _log.LogInformation("Chunk #{index} downloaded.", fileHourIndex);
 
-            _decompressorHandler.DecompressFile(downloadHelper.FileNamePath);
+            DateTime dateTimeFileName = DateTime.Now;
+            int lastHoursRequest = _config.GetValue<int>("LastHoursRequest");
+
+            DownloadURLs downloadURLs = new DownloadURLs(_config);
+            List<DownloadRequestModel> urls = downloadURLs.GetList(dateTimeFileName, lastHoursRequest);
+
+            var urlTasks = urls.Select((downloadInfo, index) =>
+            {
+                _log.LogInformation("Downloading Data from {uri} (chunk #{index}) ", downloadInfo.Address.AbsoluteUri, index);
+                return DownloadHelper.DownloadFileTaskAsync(downloadInfo.Address, downloadInfo.FileNamePath);
+            });
+
+            Task.WaitAll(urlTasks.ToArray());
+            Console.WriteLine("Done.");
+
         }
     }
 }

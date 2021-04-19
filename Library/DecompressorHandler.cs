@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DS_ProgramingChallengeLibrary.Helper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -21,31 +22,15 @@ namespace DS_ProgramingChallengeLibrary
             _log = log;
             _config = config;
         }
-        public void DecompressFile(string FileNamePath)
+        public void DecompressFiles()
         {
-            _log.LogInformation("Decompressing Data");
-
-            FileInfo fileToDecompress = new FileInfo(FileNamePath);
-
-            if (fileToDecompress.Exists)
+            string fileDownloadPath = GeneralHelper.GetDownloadedFilesPath(_config);
+            foreach (var fileNamePath in Directory.GetFiles(fileDownloadPath))
             {
-                using (FileStream originalFileStream = fileToDecompress.OpenRead())
-                {
-                    string currentFileName = fileToDecompress.FullName;
-                    string newFileName = currentFileName.Remove(currentFileName.Length - fileToDecompress.Extension.Length);
-
-                    using (FileStream decompressedFileStream = File.Create(newFileName))
-                    {
-                        using (GZipStream decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress))
-                        {
-                            decompressionStream.CopyTo(decompressedFileStream);
-                            _log.LogInformation("Decompressed: {0}", fileToDecompress.Name);
-                        }
-                    }
-                }
-
-                fileToDecompress.Delete();
-            }            
+                _log.LogInformation("Decompressing Data: {0}", fileNamePath);
+                DecompressHelper.DecompressFile(fileNamePath, true);
+                _log.LogInformation("Decompressed: {0}", fileNamePath);
+            }      
         }
     }
 }

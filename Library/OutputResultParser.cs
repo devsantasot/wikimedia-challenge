@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,11 +21,10 @@ namespace DS_ProgramingChallengeLibrary
             _log = log;
             _config = config;
         }
-        public void ShowResultInConsole()
+        public void ShowResultInConsole(DataTable resultDataTable)
         {
-
             _log.LogInformation("Showing result");
-
+            _log.LogInformation(resultDataTable.Rows.Count.ToString());
         }
     }
 }

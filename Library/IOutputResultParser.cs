@@ -1,7 +1,9 @@
-﻿namespace DS_ProgramingChallengeLibrary
+﻿using System.Data;
+
+namespace DS_ProgramingChallengeLibrary
 {
     public interface IOutputResultParser
     {
-        void ShowResultInConsole();
+        void ShowResultInConsole(DataTable resultDataTable);
     }
 }

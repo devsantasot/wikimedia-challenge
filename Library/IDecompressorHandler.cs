@@ -1,7 +1,9 @@
-﻿namespace DS_ProgramingChallengeLibrary
+﻿using System.Threading.Tasks;
+
+namespace DS_ProgramingChallengeLibrary
 {
     public interface IDecompressorHandler
     {
-        void DecompressFile(string FileNamePath);
+        void DecompressFiles();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using DS_ProgramingChallengeLibrary;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
 // This project use Dependency Injection, Serilog and Settings
 
@@ -8,10 +9,10 @@ namespace ConsoleApp
 {
     public class AppService : IAppService
     {
-        private readonly IDataHandler _dataHandler;
+        private readonly IBusinessLogic _dataHandler;
         private readonly IOutputResultParser _resultParser;
 
-        public AppService(IDataHandler dataHandler,
+        public AppService(IBusinessLogic dataHandler,
                           IOutputResultParser resultParser)
         {
             _dataHandler = dataHandler;
@@ -20,8 +21,8 @@ namespace ConsoleApp
 
         public void Run()
         {
-            _dataHandler.DownloadAndProcessData();
-            _resultParser.ShowResultInConsole();
+            _dataHandler.DownloadAndProcessData(out DataTable resultDataTable);
+            _resultParser.ShowResultInConsole(resultDataTable);
         }
     }
 }
