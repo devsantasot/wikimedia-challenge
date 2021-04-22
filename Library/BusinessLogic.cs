@@ -59,15 +59,15 @@ namespace DS_ProgramingChallengeLibrary
 
             var settings = new ExecutionDataflowBlockOptions()
             {
-                MaxDegreeOfParallelism = 5,
+                MaxDegreeOfParallelism = 2,
             };
 
             var listUrlDownloadBlock = new TransformManyBlock<int, DownloadRequestModel>(_urlSystem.GetUrlList, settings);
             var downloadFilesBlock = new TransformBlock<DownloadRequestModel, string>(_downloadHandler.DownloadData, settings);
             var decompressFileBlok = new TransformBlock<string, string>(_decompressorHandler.DecompressFile);
-            var fileParserBlock = new TransformBlock<string, GroupByOutputModel>(_fileParser.TransformData, settings);
-            var batchBlock = new BatchBlock<GroupByOutputModel>(lastHoursRequest);
-            var outputBlock = new ActionBlock<IEnumerable<GroupByOutputModel>>(_outputResultParser.ShowResult, settings);
+            var fileParserBlock = new TransformBlock<string, string>(_fileParser.TransformData, settings);
+            var batchBlock = new BatchBlock<string>(lastHoursRequest);
+            var outputBlock = new ActionBlock<IEnumerable<string>>(_outputResultParser.ShowResult, settings);
 
             DataflowLinkOptions linkOptions = new DataflowLinkOptions() { PropagateCompletion = true };
 

@@ -9,6 +9,6 @@ namespace DS_ProgramingChallengeLibrary
     {
         void TransformDataIntoDataTable(out DataTable resultDataTable);
         Task<GroupByOutputModel> TransformDataByChunks(string newfileNamePath);
-        Task<GroupByOutputModel> TransformData(string newfileNamePath);
+        Task<string> TransformData(string newfileNamePath);
     }
 }

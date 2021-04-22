@@ -7,6 +7,6 @@ namespace DS_ProgramingChallengeLibrary
     public interface IOutputResultParser
     {
         void ShowResultInConsole(DataTable resultDataTable);
-        void ShowResult(IEnumerable<GroupByOutputModel> obj);
+        void ShowResult(IEnumerable<string> obj);
     }
 }

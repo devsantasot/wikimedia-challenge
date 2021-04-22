@@ -23,10 +23,10 @@ namespace DS_ProgramingChallengeLibrary
             _config = config;
         }
 
-        public void ShowResult(IEnumerable<GroupByOutputModel> obj)
+        public void ShowResult(IEnumerable<string> obj)
         {
             _log.LogInformation("Showing result");
-            _log.LogInformation(obj.LongCount().ToString());
+            _log.LogInformation(obj.Count().ToString());
         }
 
         public void ShowResultInConsole(DataTable resultDataTable)

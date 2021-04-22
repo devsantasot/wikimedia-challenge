@@ -15,6 +15,7 @@ namespace DS_ProgramingChallengeLibrary.Models
 
     public class GroupByOutputModel
     {
-        public List<ContainedDataModel> containedDataModel { get; set; }
+        public string FileName { get; set; }
+        //public List<ContainedDataModel> containedDataModel { get; set; }
     }
 }
