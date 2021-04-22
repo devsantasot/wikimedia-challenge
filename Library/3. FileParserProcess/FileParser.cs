@@ -24,13 +24,13 @@ namespace DS_ProgramingChallengeLibrary
             _config = config;
         }
 
-        public Task<GroupByOutputModel> TransformData(string fileNamePath)
+        public Task<GroupByOutputModel> TransformDataByChunks(string fileNamePath)
         {
             _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);
             //const int chunkSize = 2 * 1024; // 2KB
             int chunkSize = 10000000; // -> 10MB  //10000; // -> 10KB //1000000; // => 1MB
             byte[] buffer = new byte[chunkSize];
-            char separator = ' ';
+            var separator = new char[0]; // or white space ' ' 
             List<ContainedDataModel> containedData = new List<ContainedDataModel>();
             List<ContainedDataModel> preResultData = new List<ContainedDataModel>();
             GroupByOutputModel result = new GroupByOutputModel();
@@ -73,6 +73,50 @@ namespace DS_ProgramingChallengeLibrary
                 }
 
                 result.containedDataModel = GroupByCountData(preResultData);
+                _log.LogInformation("Transforming data finished.");
+            }
+            return Task.Run(() =>
+            {
+                return result;
+            });
+        }
+
+        public Task<GroupByOutputModel> TransformData(string fileNamePath)
+        {
+            _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);
+            //const int chunkSize = 2 * 1024; // 2KB
+            int chunkSize = 10000000; // -> 10MB  //10000; // -> 10KB //1000000; // => 1MB
+            byte[] buffer = new byte[chunkSize];
+            var separator = new char[0]; // or white space ' ' 
+            List<ContainedDataModel> containedData = new List<ContainedDataModel>();
+            List<ContainedDataModel> preResultData = new List<ContainedDataModel>();
+            GroupByOutputModel result = new GroupByOutputModel();
+
+            lock (this)
+            {
+                using (FileStream fs = File.Open(fileNamePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (BufferedStream bs = new BufferedStream(fs))
+                using (StreamReader sr = new StreamReader(bs))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        var columns = line.Split(separator);
+
+                        string domain_code = columns[0];
+                        string page_title = columns[1];
+                        int count_views = int.Parse(columns[2]);
+
+                        containedData.Add(new ContainedDataModel()
+                        {
+                            domain_code = domain_code,
+                            page_title = page_title,
+                            count_views = count_views
+                        });
+                    }
+                }
+
+                result.containedDataModel = GroupByCountData(containedData);
                 _log.LogInformation("Transforming data finished.");
             }
             return Task.Run(() =>

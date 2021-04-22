@@ -8,6 +8,7 @@ namespace DS_ProgramingChallengeLibrary
     public interface IFileParser
     {
         void TransformDataIntoDataTable(out DataTable resultDataTable);
+        Task<GroupByOutputModel> TransformDataByChunks(string newfileNamePath);
         Task<GroupByOutputModel> TransformData(string newfileNamePath);
     }
 }
