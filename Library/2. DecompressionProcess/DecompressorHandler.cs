@@ -30,15 +30,17 @@ namespace DS_ProgramingChallengeLibrary
                 _log.LogInformation("Decompressing Data: {0}", fileNamePath);
                 DecompressHelper.DecompressFile(fileNamePath, true);
                 _log.LogInformation("Decompressed: {0}", fileNamePath);
-            }      
+            }
         }
 
         public string DecompressFile(string fileNamePath)
         {
+            string newFileNamePath = string.Empty;
+
             _log.LogInformation("Decompressing data: {0}", fileNamePath);
-            DecompressHelper.DecompressFile(fileNamePath, out string newfileNamePath);
-            _log.LogInformation("Decompressing data finished.");
-            return newfileNamePath;
+            DecompressHelper.DecompressFile(fileNamePath, out newFileNamePath);
+            _log.LogInformation("Decompressing data finished.");            
+            return newFileNamePath;
         }
     }
 }

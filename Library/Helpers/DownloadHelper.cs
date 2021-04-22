@@ -19,8 +19,15 @@ namespace DS_ProgramingChallengeLibrary.Helpers
 
         public static void DownloadFile(Uri address, string fileNamePath)
         {
-            WebClient wc = new WebClient();
-            wc.DownloadFile(address, fileNamePath);
+            try
+            {
+                WebClient wc = new WebClient();
+                wc.DownloadFile(address, fileNamePath);
+            }
+            finally
+            {
+                GC.Collect();
+            }           
         }
     }
 }

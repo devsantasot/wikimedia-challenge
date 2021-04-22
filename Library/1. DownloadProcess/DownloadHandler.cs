@@ -27,9 +27,6 @@ namespace DS_ProgramingChallengeLibrary
             DateTime dateTimeFileName = DateTime.Now;
             int lastHoursRequest = _config.GetValue<int>("LastHoursRequest");
 
-            //UrlSystem downloadURLs = new UrlSystem(_log, _config);
-            //List<DownloadRequestModel> urls = downloadURLs.GetUrlList(dateTimeFileName, lastHoursRequest);
-
             var urlTasks = urls.Select((downloadInfo, index) =>
             {
                 _log.LogInformation("Downloading Data from {uri} (chunk #{index}) ", downloadInfo.Address.AbsoluteUri, index);
@@ -44,8 +41,9 @@ namespace DS_ProgramingChallengeLibrary
         {
             _log.LogInformation("Downloading from {address} to {location}", downloadInfo.Address, downloadInfo.FileNamePath);
             DownloadHelper.DownloadFile(downloadInfo.Address, downloadInfo.FileNamePath);
+            _log.LogInformation("Download finished.");
+            
             return downloadInfo.FileNamePath;
-            _log.LogInformation("Downloading from {address} finished.");
         }
     }
 }

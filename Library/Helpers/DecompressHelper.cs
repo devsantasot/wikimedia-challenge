@@ -45,29 +45,35 @@ namespace DS_ProgramingChallengeLibrary.Helpers
             //_log.LogInformation("Decompressing Data: {0}", FileNamePath);
             newFileNamePath = string.Empty;
             FileInfo fileToDecompress = new FileInfo(fileNamePath);
-
-            if (fileToDecompress.Exists)
+            try
             {
-                using (FileStream originalFileStream = fileToDecompress.OpenRead())
+                if (fileToDecompress.Exists)
                 {
-                    string currentFileName = fileToDecompress.FullName;
-                    newFileNamePath = currentFileName.Remove(currentFileName.Length - fileToDecompress.Extension.Length);
-
-                    using (FileStream decompressedFileStream = File.Create(newFileNamePath))
+                    using (FileStream originalFileStream = fileToDecompress.OpenRead())
                     {
-                        using (GZipStream decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress))
+                        string currentFileName = fileToDecompress.FullName;
+                        newFileNamePath = currentFileName.Remove(currentFileName.Length - fileToDecompress.Extension.Length);
+
+                        using (FileStream decompressedFileStream = File.Create(newFileNamePath))
                         {
-                            decompressionStream.CopyTo(decompressedFileStream);
-                            //_log.LogInformation("Decompressed: {0}", fileToDecompress.Name);
+                            using (GZipStream decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress))
+                            {
+                                decompressionStream.CopyTo(decompressedFileStream);
+                                //_log.LogInformation("Decompressed: {0}", fileToDecompress.Name);
+                            }
                         }
                     }
-                }
 
-                if (deleteCompressFile)
-                {
-                    fileToDecompress.Delete();
+                    if (deleteCompressFile)
+                    {
+                        fileToDecompress.Delete();
+                    }
                 }
             }
+            finally
+            {
+                GC.Collect();
+            }            
         }
     }
 }

@@ -29,10 +29,17 @@ namespace DS_ProgramingChallengeLibrary
             string resultFilePath = GeneralHelper.GetResultFilePath(_config);
             string fileName = Path.GetFileName(fileNamePath);
             string resultFileNamePath = $"{resultFilePath}/{fileName}";
-            _log.LogInformation("Saving result data: {fileNamePath}", resultFileNamePath);
+            try
+            {
+                _log.LogInformation("Saving result data: {fileNamePath}", resultFileNamePath);
 
-            using FileStream createStream = File.Create(resultFileNamePath);
-            await JsonSerializer.SerializeAsync(createStream, resultGroupBy);
+                using FileStream createStream = File.Create(resultFileNamePath);
+                await JsonSerializer.SerializeAsync(createStream, resultGroupBy);
+            }
+            finally
+            {
+                GC.Collect();
+            }
         }
     }
 }
