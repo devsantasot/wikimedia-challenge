@@ -6,17 +6,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DS_ProgramingChallengeLibrary.Helper
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using DS_ProgramingChallengeLibrary.Helpers;
+using System.Net;
+
+namespace DS_ProgramingChallengeLibrary
 {
-    public class DownloadURLs
+    public class UrlSystem : IUrlSystem
     {
-        IConfiguration _config;
-        public DownloadURLs(IConfiguration config)
+        private readonly ILogger<UrlSystem> _log;
+        private readonly IConfiguration _config;
+
+        public UrlSystem(ILogger<UrlSystem> log, IConfiguration config)
         {
+            _log = log;
             _config = config;
         }
 
-        public List<DownloadRequestModel> GetList(DateTime dateTimeFileName, int lastHoursRequest)
+        public List<DownloadRequestModel> GetUrlList(DateTime dateTimeFileName, int lastHoursRequest)
         {
             List<DownloadRequestModel> urls = new List<DownloadRequestModel>();
 
@@ -28,6 +41,20 @@ namespace DS_ProgramingChallengeLibrary.Helper
             return urls;
         }
 
+        public List<DownloadRequestModel> GetUrlList(int lastHoursRequest)
+        {
+            _log.LogInformation("Building Urls...");
+            DateTime dateTimeFileName = DateTime.Now;
+            List<DownloadRequestModel> urls = new List<DownloadRequestModel>();
+
+            for (int fileHourIndex = 0; fileHourIndex < lastHoursRequest; fileHourIndex++)
+            {
+                urls.Add(BuildUrlRequest(dateTimeFileName, fileHourIndex));
+            }
+
+            _log.LogInformation("Building Urls done.");
+            return urls;
+        }
         private DownloadRequestModel BuildUrlRequest(DateTime dateTimeFileName, int fileHourIndex)
         {
             string baseURL = _config.GetValue<string>("BaseURLDownload");

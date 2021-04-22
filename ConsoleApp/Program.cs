@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 // This project use Dependency Injection, Serilog, Settings
 
@@ -11,7 +12,7 @@ namespace ConsoleApp
 {
     class Program
     {
-        static int Main(string[] args)
+        static async Task Main(string[] args)
         {
             // Initialize serilog logger
             ContainerConfig.ConfigureLogger();
@@ -27,14 +28,14 @@ namespace ConsoleApp
             try
             {
                 Log.Information("Starting service");
-                serviceProvider.GetService<IAppService>().Run();
-                Log.Information("Ending service");
-                return 0;
+                await serviceProvider.GetService<IAppService>().RunAsync();
+                //Log.Information("Ending service");
+                //return 0;
             }
             catch (Exception ex)
             {
                 Log.Fatal(ex, "Error running service");
-                return 1;
+                //return 1;
             }
             finally
             {

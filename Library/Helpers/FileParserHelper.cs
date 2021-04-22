@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DS_ProgramingChallengeLibrary.Helper
+namespace DS_ProgramingChallengeLibrary.Helpers
 {
-    public static class FileParserHelper
+    public class FileParserHelper
     {
         public static DataTable ConvertToDataTable(string filePath, int numberOfColumns, char separator)
         {
@@ -35,6 +35,7 @@ namespace DS_ProgramingChallengeLibrary.Helper
 
             return tbl;
         }
+               
 
         public static string CombineMultipleTextFiles(string mainPath, string resultPath = "", string resultNameFile = "output.txt", bool deleteOtherFiles = false)
         {

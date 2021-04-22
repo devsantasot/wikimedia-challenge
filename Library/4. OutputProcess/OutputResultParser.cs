@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DS_ProgramingChallengeLibrary.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -21,9 +22,16 @@ namespace DS_ProgramingChallengeLibrary
             _log = log;
             _config = config;
         }
-        public void ShowResultInConsole(DataTable resultDataTable)
+
+        public void ShowResult(IEnumerable<GroupByOutputModel> obj)
         {
             _log.LogInformation("Showing result");
+            _log.LogInformation(obj.LongCount().ToString());
+        }
+
+        public void ShowResultInConsole(DataTable resultDataTable)
+        {
+            _log.LogInformation("Building and showing result...");
             _log.LogInformation(resultDataTable.Rows.Count.ToString());
         }
     }

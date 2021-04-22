@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DS_ProgramingChallengeLibrary.Helper
+namespace DS_ProgramingChallengeLibrary.Helpers
 {
     public static class GeneralHelper
     {

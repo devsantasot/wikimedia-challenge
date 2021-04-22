@@ -53,6 +53,7 @@ namespace ConsoleApp
             serviceCollection.AddTransient<IDecompressorHandler, DecompressorHandler>();
             serviceCollection.AddTransient<IFileParser, FileParser>();
             serviceCollection.AddTransient<IOutputResultParser, OutputResultParser>();
+            serviceCollection.AddTransient<IUrlSystem, UrlSystem>();
         }
     }
 }
