@@ -8,12 +8,11 @@ namespace DS_ProgramingChallengeLibrary
     public interface IFileParser
     {
         void TransformDataIntoDataTable(out DataTable resultDataTable);
-        Task<GroupByOutputModel> TransformDataByChunks(string newfileNamePath);
         /// <summary>
         /// Return the rute of the transform data
         /// </summary>
         /// <param name="newfileNamePath"></param>
         /// <returns></returns>
-        Task<string> TransformData(string newfileNamePath);
+        Task<string> TransformDataAsync(string newfileNamePath);
     }
 }

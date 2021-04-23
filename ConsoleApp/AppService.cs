@@ -25,11 +25,5 @@ namespace ConsoleApp
         {
             await _businessLogic.ProcesingAsync();
         }
-
-        public void Run()
-        {
-            _businessLogic.DownloadAndProcessData(out DataTable resultDataTable);
-            _resultParser.ShowResultInConsole(resultDataTable);
-        }
     }
 }

@@ -6,6 +6,6 @@ namespace DS_ProgramingChallengeLibrary
 {
     public interface IFileSystem
     {
-        Task SaveData(List<ContainedDataModel> resultGroupBy, string fileName);
+        Task SaveDataAsync(IEnumerable<ContainedDataModel> resultGroupBy, string fileName);
     }
 }

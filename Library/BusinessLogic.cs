@@ -40,18 +40,6 @@ namespace DS_ProgramingChallengeLibrary
             _outputResultParser = outputResultParser;
         }
 
-        public void DownloadAndProcessData(out DataTable resultDataTable)
-        {
-            int lastHoursRequest = _config.GetValue<int>("LastHoursRequest");
-            _log.LogInformation("Processing Data from the last {lastHoursRequest} hours...", lastHoursRequest);
-
-            List<DownloadRequestModel> urls = _urlSystem.GetUrlList(lastHoursRequest);
-            _downloadHandler.DownloadData(urls);
-            _decompressorHandler.DecompressFiles();
-            //_fileParser.TransformDataIntoDataTable(out resultDataTable);
-            resultDataTable = new DataTable();
-        }
-
         public async Task ProcesingAsync()
         {
             var lastHoursRequest = _config.GetValue<int>("LastHoursRequest");
@@ -65,7 +53,7 @@ namespace DS_ProgramingChallengeLibrary
             var listUrlDownloadBlock = new TransformManyBlock<int, DownloadRequestModel>(_urlSystem.GetUrlList, settings);
             var downloadFilesBlock = new TransformBlock<DownloadRequestModel, string>(_downloadHandler.DownloadData, settings);
             var decompressFileBlok = new TransformBlock<string, string>(_decompressorHandler.DecompressFile);
-            var fileParserBlock = new TransformBlock<string, string>(_fileParser.TransformData, settings);
+            var fileParserBlock = new TransformBlock<string, string>(_fileParser.TransformDataAsync, settings);
             var batchBlock = new BatchBlock<string>(lastHoursRequest);
             var outputBlock = new ActionBlock<IEnumerable<string>>(_outputResultParser.ShowResult, settings);
 

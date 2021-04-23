@@ -81,7 +81,7 @@ namespace DS_ProgramingChallengeLibrary.Helpers
             }
         }
 
-        private static void CreatePathIfNotExist(string filePath)
+        public static void CreatePathIfNotExist(string filePath)
         {
             if (Directory.Exists(filePath) == false)
             {

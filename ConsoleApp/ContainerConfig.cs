@@ -54,6 +54,7 @@ namespace ConsoleApp
             serviceCollection.AddTransient<IFileParser, FileParser>();
             serviceCollection.AddTransient<IOutputResultParser, OutputResultParser>();
             serviceCollection.AddTransient<IUrlSystem, UrlSystem>();
+            serviceCollection.AddTransient<IFileSystem, FileSystemJson>();
             serviceCollection.AddTransient<IFileSystem, FileSystem>();
         }
     }

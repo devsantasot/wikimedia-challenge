@@ -13,10 +13,10 @@ using DS_ProgramingChallengeLibrary.Helpers;
 
 namespace DS_ProgramingChallengeLibrary
 {
-    public class FileSystem : FileSystemBase
+    public class FileSystemJson : FileSystemBase
     {
 
-        public FileSystem(ILogger<FileSystem> log, IConfiguration config)
+        public FileSystemJson(ILogger<FileSystemJson> log, IConfiguration config) 
             : base(log, config)
         {
         }
@@ -29,25 +29,15 @@ namespace DS_ProgramingChallengeLibrary
             try
             {
                 FileParserHelper.CreatePathIfNotExist(resultFilePath);
-                _log.LogInformation("Saving result data: {fileNamePath}", resultFileNamePath);
+                _log.LogInformation("Saving result data [json]: {fileNamePath}", resultFileNamePath);
 
-                // await File.WriteAllLinesAsync(resultFileNamePath, resultGroupBy);
-
-                using (StreamWriter sw = new StreamWriter(resultFileNamePath))
-                {
-                    foreach (var item in resultGroupBy)
-                    {
-                        await sw.WriteLineAsync($"{item.domain_code} {item.page_title} {item.count_views}");
-                    }
-                }
-
+                using FileStream createStream = File.Create(resultFileNamePath);
+                await JsonSerializer.SerializeAsync(createStream, resultGroupBy);
             }
             finally
             {
                 GC.Collect();
             }
         }
-
-
     }
 }

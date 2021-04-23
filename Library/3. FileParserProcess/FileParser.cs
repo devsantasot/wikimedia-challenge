@@ -26,69 +26,12 @@ namespace DS_ProgramingChallengeLibrary
             _fileSystem = fileSystem;
         }
 
-        public Task<GroupByOutputModel> TransformDataByChunks(string fileNamePath)
+        public async Task<string> TransformDataAsync(string fileNamePath)
         {
             _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);
-            //const int chunkSize = 2 * 1024; // 2KB
-            int chunkSize = 10000000; // -> 10MB  //10000; // -> 10KB //1000000; // => 1MB
-            byte[] buffer = new byte[chunkSize];
-            var separator = new char[0]; // or white space ' ' 
-            List<ContainedDataModel> containedData = new List<ContainedDataModel>();
-            List<ContainedDataModel> preResultData = new List<ContainedDataModel>();
-            GroupByOutputModel result = new GroupByOutputModel();
-
-            lock (this)
-            {
-                using (FileStream fileStream = new FileStream(fileNamePath, FileMode.Open, FileAccess.Read))
-                {
-                    int reading = 1;
-                    while (reading > 0)
-                    {
-                        reading = fileStream.Read(buffer, 0, chunkSize);
-                        string partOfFile = Encoding.UTF8.GetString(buffer, 0, reading);
-                        using (MemoryStream memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(partOfFile)))
-                        {
-                            using (StreamReader streamReader = new StreamReader(memoryStream, Encoding.UTF8, true))
-                            {
-                                while (!streamReader.EndOfStream)
-                                {
-                                    var line = streamReader.ReadLine();
-                                    var columns = line.Split(separator);
-
-                                    string domain_code = columns[0];
-                                    string page_title = columns[1];
-                                    int count_views = int.Parse(columns[2]);
-
-                                    containedData.Add(new ContainedDataModel()
-                                    {
-                                        domain_code = domain_code,
-                                        page_title = page_title,
-                                        count_views = count_views
-                                    });
-                                }
-                            }
-                        }
-
-                        preResultData.AddRange(GroupByCountData(containedData));
-
-                    }
-                }
-
-                preResultData = GroupByCountData(preResultData);
-                _log.LogInformation("Transforming data finished.");
-            }
-            return Task.Run(() =>
-            {
-                return result;
-            });
-        }
-
-        public async Task<string> TransformData(string fileNamePath)
-        {
-            _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);           
             var separator = new char[0]; // or white space ' ' 
             List<ContainedDataModel> containedData = new();
-            List<ContainedDataModel> preResultData = new();
+            IEnumerable<ContainedDataModel> preResultData;
             string fileName = string.Empty;
 
             try
@@ -132,16 +75,15 @@ namespace DS_ProgramingChallengeLibrary
                     _log.LogInformation("Transforming data finished.");
                 }
 
-                await _fileSystem.SaveData(preResultData, fileName);
+                await _fileSystem.SaveDataAsync(preResultData, fileName);
             }
             finally
             {
                 GC.Collect();
             }
-            //return Task.Run(() =>
-            //{
+            
             return fileName;
-            //});
+           
         }
 
         public void TransformDataIntoDataTable(out DataTable resultDataTable)
@@ -154,17 +96,29 @@ namespace DS_ProgramingChallengeLibrary
             _log.LogInformation("Transformed.");
         }
 
-        private List<ContainedDataModel> GroupByCountData(List<ContainedDataModel> containedData)
+        private IEnumerable<ContainedDataModel> GroupByCountData(List<ContainedDataModel> containedData)
         {
-            return containedData
-                .GroupBy(c => new { c.domain_code, c.page_title })
-                .Select(gb => new ContainedDataModel()
-                {
-                    domain_code = gb.Key.domain_code,
-                    page_title = gb.Key.page_title,
-                    count_views = gb.Count()
-                }).ToList();
+            //return containedData
+            //    .GroupBy(c => new { c.domain_code, c.page_title })
+            //    //.Where(grp => grp.Count() > 1)
+            //    .Select(gb => new ContainedDataModel()
+            //    {
+            //        domain_code = gb.Key.domain_code,
+            //        page_title = gb.Key.page_title,
+            //        count_views = gb.Count()
+            //    });
+
+            return from e in containedData
+                   group e by new { e.domain_code, e.page_title } into gb
+                   //where gb.Count() > 1
+                   select new ContainedDataModel
+                   {
+                       domain_code = gb.Key.domain_code,
+                       page_title = gb.Key.page_title,
+                       count_views = gb.Count()
+                   };
         }
+
         private List<ContainedDataModel> GroupBySumData(List<ContainedDataModel> containedData)
         {
             return containedData
