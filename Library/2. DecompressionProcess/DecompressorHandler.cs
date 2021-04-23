@@ -1,38 +1,49 @@
 ﻿using DS_ProgramingChallengeLibrary.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
+using System.IO.Compression;
 
 namespace DS_ProgramingChallengeLibrary
 {
     public class DecompressorHandler : IDecompressorHandler
     {
         private readonly ILogger _log;
-        private readonly IConfiguration _config;
 
-        public DecompressorHandler(ILogger<DecompressorHandler> log, IConfiguration config)
+        public DecompressorHandler(ILogger<DecompressorHandler> log)
         {
             _log = log;
-            _config = config;
-        }
-        public void DecompressFiles()
-        {
-            string fileDownloadPath = GeneralHelper.GetDownloadedFilesPath(_config);
-            foreach (var fileNamePath in Directory.GetFiles(fileDownloadPath))
-            {
-                _log.LogInformation("Decompressing Data: {0}", fileNamePath);
-                DecompressHelper.DecompressFile(fileNamePath, true);
-                _log.LogInformation("Decompressed: {0}", fileNamePath);
-            }
         }
 
         public string DecompressFile(string fileNamePath)
         {
-            string newFileNamePath = string.Empty;
-
             _log.LogInformation("Decompressing data: {0}", fileNamePath);
-            DecompressHelper.DecompressFile(fileNamePath, out newFileNamePath);
-            _log.LogInformation("Decompressing data finished.");
+            string newFileNamePath = string.Empty;
+            FileInfo fileToDecompress = new(fileNamePath);
+            try
+            {
+                if (fileToDecompress.Exists)
+                {
+                    using (FileStream originalFileStream = fileToDecompress.OpenRead())
+                    {
+                        string currentFileName = fileToDecompress.FullName;
+                        newFileNamePath = currentFileName.Remove(currentFileName.Length - fileToDecompress.Extension.Length);
+
+                        using FileStream decompressedFileStream = File.Create(newFileNamePath);
+                        using GZipStream decompressionStream = new(originalFileStream, CompressionMode.Decompress);
+                        decompressionStream.CopyTo(decompressedFileStream);
+                    }
+
+                    fileToDecompress.Delete();
+
+                    _log.LogInformation("Decompressing data finished.");
+                }
+            }
+            finally
+            {
+                GC.Collect();
+            }
             return newFileNamePath;
         }
     }

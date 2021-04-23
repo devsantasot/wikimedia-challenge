@@ -6,7 +6,8 @@ namespace DS_ProgramingChallengeLibrary
     {
         public UnitOfWork(IConfiguration configuration,
                           IDownloadHandler downloadHandler,
-                          IFileAnalysis fileParser,
+                          IProcessData processData,
+                          ITransformData transformData,
                           IFileSystem fileSystem,
                           IDecompressorHandler decompressorHandler,
                           IUrlSystem urlSystem,
@@ -16,7 +17,8 @@ namespace DS_ProgramingChallengeLibrary
             DownloadHandler = downloadHandler;
             UrlSystem = urlSystem;
             DecompressorHandler = decompressorHandler;
-            FileParser = fileParser;
+            ProcessFileData = processData;
+            TransformFileData = transformData;
             FileSystem = fileSystem;
             OutputResultParser = outputResultParser;
         }
@@ -29,10 +31,12 @@ namespace DS_ProgramingChallengeLibrary
 
         public IDecompressorHandler DecompressorHandler { get; private set; }
 
-        public IFileAnalysis FileParser { get; private set; }
+        public IProcessData ProcessFileData { get; private set; }
 
         public IFileSystem FileSystem { get; private set; }
 
         public IOutputResultParser OutputResultParser { get; private set; }
+
+        public ITransformData TransformFileData { get; private set; }
     }
 }

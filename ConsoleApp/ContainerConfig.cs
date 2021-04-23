@@ -51,10 +51,10 @@ namespace ConsoleApp
             serviceCollection.AddTransient<IBusinessLogic, BusinessLogic>();
             serviceCollection.AddTransient<IDownloadHandler, DownloadHandler>();
             serviceCollection.AddTransient<IDecompressorHandler, DecompressorHandler>();
-            serviceCollection.AddTransient<IFileAnalysis, FileAnalysis>();
+            serviceCollection.AddTransient<IProcessData, ProcessData>();
+            serviceCollection.AddTransient<ITransformData, TransformData>();
             serviceCollection.AddTransient<IOutputResultParser, OutputResultParser>();
             serviceCollection.AddTransient<IUrlSystem, UrlSystem>();
-            serviceCollection.AddTransient<IFileSystem, FileSystemJson>();
             serviceCollection.AddTransient<IFileSystem, FileSystem>();
 
             serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();

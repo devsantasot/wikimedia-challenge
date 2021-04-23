@@ -1,5 +1,7 @@
 ﻿using DS_ProgramingChallengeLibrary.Helpers;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Net;
 
 namespace DS_ProgramingChallengeLibrary
 {
@@ -15,8 +17,16 @@ namespace DS_ProgramingChallengeLibrary
         public string DownloadData(DownloadRequestModel downloadInfo)
         {
             _log.LogInformation("Downloading from {address} to {location}", downloadInfo.Address, downloadInfo.FileNamePath);
-            DownloadHelper.DownloadFile(downloadInfo.Address, downloadInfo.FileNamePath);
-            _log.LogInformation("Download finished.");
+            try
+            {
+                WebClient wc = new WebClient();
+                wc.DownloadFile(downloadInfo.Address, downloadInfo.FileNamePath);
+                _log.LogInformation("Download finished.");
+            }
+            finally
+            {
+                GC.Collect();
+            }
 
             return downloadInfo.FileNamePath;
         }

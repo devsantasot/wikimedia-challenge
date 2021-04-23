@@ -10,76 +10,18 @@ using System.Threading.Tasks;
 
 namespace DS_ProgramingChallengeLibrary
 {
-    public class FileAnalysis : IFileAnalysis
+    public abstract class FileAnalysisBase
     {
-        private readonly ILogger _log;
-        private readonly IFileSystem _fileSystem;
+        protected readonly ILogger _log;
+        protected readonly IFileSystem _fileSystem;
 
-        public FileAnalysis(ILogger<FileAnalysis> log, IFileSystem fileSystem)
+        public FileAnalysisBase(ILogger log, IFileSystem fileSystem)
         {
             _log = log;
             _fileSystem = fileSystem;
         }
 
-        public Task<string> TransformDataAsync(string fileNamePath)
-        {
-            _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);
-            var separator = new char[0];
-            List<DataModelSummary> dataModel;
-            List<DataModelSummary> dataModelSum;
-
-            lock (this)
-            {
-                dataModel = GetDataModelSumFromFile(fileNamePath, separator);
-                dataModelSum = GroupBySumData(dataModel);
-                _log.LogInformation("Transforming data finished.");
-            }
-
-            return _fileSystem.SaveDataAsync(dataModelSum, fileNamePath);
-        }
-
-        public Task<IEnumerable<OutputModel>> ProcessDataAsync(string fileNamePath)
-        {
-            _log.LogInformation("Reading and processing final data: {fileNamePath}", fileNamePath);
-            var separator = new char[0];
-            List<DataModelSummary> dataModel;
-            IEnumerable<OutputModel> outputModel;
-
-            try
-            {
-                lock (this)
-                {
-                    dataModel = GetDataModelSumFromFile(fileNamePath, separator);
-
-                    _log.LogInformation("Reading data finished.");
-                }
-
-                var resultGroupBySum = GroupBySumData(dataModel);
-                var resultGroupByMax = GroupByMaxData(resultGroupBySum);
-
-                outputModel = from r in resultGroupByMax
-                              join g in resultGroupBySum on new { r.domain_code, r.count_views } equals new { g.domain_code, g.count_views }
-                              select new OutputModel
-                              {
-                                  domain_code = r.domain_code,
-                                  page_title = g.page_title,
-                                  max_count_views = r.count_views
-                              };
-
-                _log.LogInformation("Processing data finished.");
-            }
-            finally
-            {
-                GC.Collect();
-            }
-
-            return Task.Run(() =>
-            {
-                return outputModel;
-            });
-        }
-
-        private List<DataModelSummary> GetDataModelSumFromFile(string fileNamePath, char[] separator)
+        internal List<DataModelSummary> GetDataModelSumFromFile(string fileNamePath, char[] separator)
         {
             List<DataModelSummary> dataModel = new();
             try
@@ -124,7 +66,7 @@ namespace DS_ProgramingChallengeLibrary
             return dataModel;
         }
 
-        private List<DataModelSummary> GroupBySumData(List<DataModelSummary> dataModel)
+        internal List<DataModelSummary> GroupBySumData(List<DataModelSummary> dataModel)
         {
             return (from e in dataModel
                     group e by new { e.domain_code, e.page_title } into gb
@@ -136,7 +78,7 @@ namespace DS_ProgramingChallengeLibrary
                     }).ToList();
         }
 
-        private IEnumerable<DataModelSummary> GroupByMaxData(List<DataModelSummary> containedData)
+        internal IEnumerable<DataModelSummary> GroupByMaxData(List<DataModelSummary> containedData)
         {
             return containedData
                .GroupBy(c => new { c.domain_code })

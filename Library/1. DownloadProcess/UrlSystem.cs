@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DS_ProgramingChallengeLibrary.Helpers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -40,16 +41,12 @@ namespace DS_ProgramingChallengeLibrary
             string workspacePath = _config.GetValue<string>("FilesWorkspacePath");
             dateTimeFileName = dateTimeFileName.AddHours(-1 * fileHourIndex);
 
-            DownloadRequestModel downloadRequestModel = new DownloadRequestModel();
-
+            DownloadRequestModel downloadRequestModel = new();
             downloadRequestModel.FileName = dateTimeFileName.ToString(fileNameFormat);
             downloadRequestModel.Address = new Uri($"{baseURL}/{dateTimeFileName.ToString(fileRuteFormat)}/{downloadRequestModel.FileName}");
             downloadRequestModel.FilesWorkspacePath = $"{(string.IsNullOrEmpty(workspacePath) ? AppContext.BaseDirectory : workspacePath)}/Pending";
 
-            if (Directory.Exists(downloadRequestModel.FilesWorkspacePath) == false)
-            {
-                Directory.CreateDirectory(downloadRequestModel.FilesWorkspacePath);
-            }
+            FileHelper.CreatePathIfNotExist(downloadRequestModel.FilesWorkspacePath);
 
             return downloadRequestModel;
         }

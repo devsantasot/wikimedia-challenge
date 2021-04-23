@@ -8,7 +8,8 @@ namespace DS_ProgramingChallengeLibrary
         IDownloadHandler DownloadHandler { get; }
         IUrlSystem UrlSystem { get; }
         IDecompressorHandler DecompressorHandler { get; }
-        IFileAnalysis FileParser { get; }
+        IProcessData ProcessFileData { get; }
+        ITransformData TransformFileData { get; }
         IFileSystem FileSystem { get; }
         IOutputResultParser OutputResultParser { get; }
     }

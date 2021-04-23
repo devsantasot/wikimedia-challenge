@@ -7,6 +7,16 @@ using System.Threading.Tasks.Dataflow;
 
 namespace DS_ProgramingChallengeLibrary
 {
+    /// <summary>
+    /// I've use TPL Dataflow.
+    /// 1. Get the URLs to download.
+    /// 2. Download the file to workspace (local disk).
+    /// 3. Decompress the file  to workspace (local disk).
+    /// 4. Read the file and transform the data to reduce the size. 
+    /// 5. Unify all processed files into one.
+    /// 6. Process all data in the unify file.
+    /// 7. Print the result of the analysis.
+    /// </summary>
     public class BusinessLogic : IBusinessLogic
     {
         private readonly ILogger<BusinessLogic> _log;
@@ -31,10 +41,10 @@ namespace DS_ProgramingChallengeLibrary
             var listUrlDownloadBlock = new TransformManyBlock<int, DownloadRequestModel>(_unitOfWork.UrlSystem.GetUrlList, settings);
             var downloadFilesBlock = new TransformBlock<DownloadRequestModel, string>(_unitOfWork.DownloadHandler.DownloadData, settings);
             var decompressFileBlok = new TransformBlock<string, string>(_unitOfWork.DecompressorHandler.DecompressFile);
-            var fileParserBlock = new TransformBlock<string, string>(_unitOfWork.FileParser.TransformDataAsync, settings);
+            var fileParserBlock = new TransformBlock<string, string>(_unitOfWork.TransformFileData.TransformDataAsync, settings);
             var batchBlock = new BatchBlock<string>(lastHoursRequest);
             var unionFileParserBlock = new TransformBlock<IEnumerable<string>, string>(_unitOfWork.FileSystem.CombineMultipleTextFiles, settings);
-            var resultParserBlock = new TransformBlock<string, IEnumerable<OutputModel>>(_unitOfWork.FileParser.ProcessDataAsync, settings);
+            var resultParserBlock = new TransformBlock<string, IEnumerable<OutputModel>>(_unitOfWork.ProcessFileData.ProcessDataAsync, settings);
             var outputBlock = new ActionBlock<IEnumerable<OutputModel>>(_unitOfWork.OutputResultParser.ShowResult, settings);
 
             DataflowLinkOptions linkOptions = new DataflowLinkOptions() { PropagateCompletion = true };

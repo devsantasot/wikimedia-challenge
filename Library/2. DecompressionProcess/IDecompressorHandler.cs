@@ -2,7 +2,6 @@
 {
     public interface IDecompressorHandler
     {
-        void DecompressFiles();
         string DecompressFile(string fileNamePath);
     }
 }

@@ -5,42 +5,6 @@ namespace DS_ProgramingChallengeLibrary.Helpers
 {
     public class FileHelper
     {
-        public static string CombineMultipleTextFiles(string mainPath, string resultPath = "", string resultNameFile = "output.txt", bool deleteOtherFiles = false)
-        {
-            string resultFileNamePath;
-            const int chunkSize = 2 * 1024; // 2KB
-            var inputFiles = Directory.GetFiles(mainPath);
-
-            resultPath = $"{(string.IsNullOrEmpty(resultPath) ? AppContext.BaseDirectory : resultPath)}";
-            resultFileNamePath = $"{resultPath}/{resultNameFile}";
-
-            CreatePathIfNotExist(resultPath);
-            DeleteFileIfExist(resultFileNamePath);
-
-            using (var output = File.Create(resultFileNamePath))
-            {
-                foreach (var file in inputFiles)
-                {
-                    using (var input = File.OpenRead(file))
-                    {
-                        var buffer = new byte[chunkSize];
-                        int bytesRead;
-                        while ((bytesRead = input.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            output.Write(buffer, 0, bytesRead);
-                        }
-                    }
-
-                    if (deleteOtherFiles)
-                    {
-                        DeleteFileIfExist(file);
-                    }
-                }
-            }
-
-            return resultFileNamePath;
-        }
-
         public static void DeleteFileIfExist(string fileNamePath)
         {
             if (Directory.Exists(fileNamePath))
