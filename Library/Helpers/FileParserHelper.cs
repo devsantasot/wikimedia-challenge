@@ -35,7 +35,7 @@ namespace DS_ProgramingChallengeLibrary.Helpers
 
             return tbl;
         }
-               
+
 
         public static string CombineMultipleTextFiles(string mainPath, string resultPath = "", string resultNameFile = "output.txt", bool deleteOtherFiles = false)
         {
@@ -45,7 +45,7 @@ namespace DS_ProgramingChallengeLibrary.Helpers
 
             resultPath = $"{(string.IsNullOrEmpty(resultPath) ? AppContext.BaseDirectory : resultPath)}";
             resultFileNamePath = $"{resultPath}/{resultNameFile}";
-           
+
             CreatePathIfNotExist(resultPath);
             DeleteFileIfExist(resultFileNamePath);
 
@@ -68,14 +68,14 @@ namespace DS_ProgramingChallengeLibrary.Helpers
                         DeleteFileIfExist(file);
                     }
                 }
-            }            
+            }
 
             return resultFileNamePath;
         }
 
-        private static void DeleteFileIfExist(string fileNamePath)
+        public static void DeleteFileIfExist(string fileNamePath)
         {
-            if(Directory.Exists(fileNamePath))
+            if (Directory.Exists(fileNamePath))
             {
                 Directory.Delete(fileNamePath);
             }

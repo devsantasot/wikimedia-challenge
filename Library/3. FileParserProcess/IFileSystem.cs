@@ -6,6 +6,8 @@ namespace DS_ProgramingChallengeLibrary
 {
     public interface IFileSystem
     {
-        Task SaveDataAsync(IEnumerable<ContainedDataModel> resultGroupBy, string fileName);
+        Task SaveDataAsync(IEnumerable<DataModel> resultGroupBy, string fileName);
+
+        string CombineMultipleTextFiles(IEnumerable<string> inputFiles);
     }
 }

@@ -56,6 +56,8 @@ namespace ConsoleApp
             serviceCollection.AddTransient<IUrlSystem, UrlSystem>();
             serviceCollection.AddTransient<IFileSystem, FileSystemJson>();
             serviceCollection.AddTransient<IFileSystem, FileSystem>();
+
+            serviceCollection.AddTransient<IUnitOfWork, UnitOfWork>();
         }
     }
 }

@@ -16,6 +16,7 @@ namespace DS_ProgramingChallengeLibrary
     {
         private readonly ILogger _log;
         private readonly IConfiguration _config;
+        static int tableWidth = 73;
 
         public OutputResultParser(ILogger<OutputResultParser> log, IConfiguration config)
         {
@@ -23,16 +24,58 @@ namespace DS_ProgramingChallengeLibrary
             _config = config;
         }
 
-        public void ShowResult(IEnumerable<string> obj)
+        public void ShowResult(IEnumerable<OutputModel> obj)
         {
             _log.LogInformation("Showing result");
-            _log.LogInformation(obj.Count().ToString());
+
+            try
+            {
+                PrintLine();
+                PrintRow("domain_code", "page_title", "max_ count_views");
+                PrintLine();
+                foreach (OutputModel item in obj)
+                {
+                    PrintRow(item.domain_code, item.page_title, item.max_count_views.ToString());
+                }
+                PrintLine();
+            }
+            finally
+            {
+                GC.Collect();
+            }
+            Console.ReadLine();
         }
 
-        public void ShowResultInConsole(DataTable resultDataTable)
+        static void PrintLine()
         {
-            _log.LogInformation("Building and showing result...");
-            _log.LogInformation(resultDataTable.Rows.Count.ToString());
+            Console.WriteLine(new string('-', tableWidth));
+        }
+
+        static void PrintRow(params string[] columns)
+        {
+            int width = (tableWidth - columns.Length) / columns.Length;
+            string row = "|";
+
+            foreach (string column in columns)
+            {
+                row += AlignCentre(column, width) + "|";
+            }
+
+            Console.WriteLine(row);
+        }
+
+        static string AlignCentre(string text, int width)
+        {
+            text = text.Length > width ? text.Substring(0, width - 3) + "..." : text;
+
+            if (string.IsNullOrEmpty(text))
+            {
+                return new string(' ', width);
+            }
+            else
+            {
+                return text.PadRight(width - (width - text.Length) / 2).PadLeft(width);
+            }
         }
     }
 }

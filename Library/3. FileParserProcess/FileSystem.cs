@@ -21,7 +21,7 @@ namespace DS_ProgramingChallengeLibrary
         {
         }
 
-        public override async Task SaveDataAsync(IEnumerable<ContainedDataModel> resultGroupBy, string fileNamePath)
+        public override async Task SaveDataAsync(IEnumerable<DataModel> resultGroupBy, string fileNamePath)
         {
             string resultFilePath = GeneralHelper.GetResultFilePath(_config);
             string fileName = Path.GetFileName(fileNamePath);
@@ -31,16 +31,11 @@ namespace DS_ProgramingChallengeLibrary
                 FileParserHelper.CreatePathIfNotExist(resultFilePath);
                 _log.LogInformation("Saving result data: {fileNamePath}", resultFileNamePath);
 
-                // await File.WriteAllLinesAsync(resultFileNamePath, resultGroupBy);
-
-                using (StreamWriter sw = new StreamWriter(resultFileNamePath))
+                using StreamWriter sw = new(resultFileNamePath);
+                foreach (DataModel item in resultGroupBy)
                 {
-                    foreach (var item in resultGroupBy)
-                    {
-                        await sw.WriteLineAsync($"{item.domain_code} {item.page_title} {item.count_views}");
-                    }
+                    await sw.WriteLineAsync($"{item.domain_code} {item.page_title}");
                 }
-
             }
             finally
             {
@@ -48,6 +43,35 @@ namespace DS_ProgramingChallengeLibrary
             }
         }
 
+        public override string CombineMultipleTextFiles(IEnumerable<string> inputFiles)
+        {
+            const int chunkSize = 2 * 1024; // 2KB
+            string resultFilePath = GeneralHelper.GetResultFilePath(_config);
+            string fileName = "output.txt";
+            string resultFileNamePath = $"{resultFilePath}/{fileName}";
 
+            FileParserHelper.CreatePathIfNotExist(resultFilePath);
+            FileParserHelper.DeleteFileIfExist(resultFileNamePath);
+
+            using (var output = File.Create(resultFileNamePath))
+            {
+                foreach (var file in inputFiles)
+                {
+                    using (var input = File.OpenRead(file))
+                    {
+                        var buffer = new byte[chunkSize];
+                        int bytesRead;
+                        while ((bytesRead = input.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            output.Write(buffer, 0, bytesRead);
+                        }
+                    }
+
+                    FileParserHelper.DeleteFileIfExist(file);
+                }
+            }
+
+            return resultFileNamePath;
+        }
     }
 }

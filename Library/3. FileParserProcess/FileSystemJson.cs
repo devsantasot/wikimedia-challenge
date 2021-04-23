@@ -21,7 +21,12 @@ namespace DS_ProgramingChallengeLibrary
         {
         }
 
-        public override async Task SaveDataAsync(IEnumerable<ContainedDataModel> resultGroupBy, string fileNamePath)
+        public override string CombineMultipleTextFiles(IEnumerable<string> inputFiles)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override async Task SaveDataAsync(IEnumerable<DataModel> resultGroupBy, string fileNamePath)
         {
             string resultFilePath = GeneralHelper.GetResultFilePath(_config);
             string fileName = Path.GetFileName(fileNamePath);

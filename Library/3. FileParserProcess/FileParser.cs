@@ -29,106 +29,123 @@ namespace DS_ProgramingChallengeLibrary
         public async Task<string> TransformDataAsync(string fileNamePath)
         {
             _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);
-            var separator = new char[0]; // or white space ' ' 
-            List<ContainedDataModel> containedData = new();
-            IEnumerable<ContainedDataModel> preResultData;
+            var separator = new char[0];
+            List<DataModel> dataModel;
+            string fileName = string.Empty;
+
+            lock (this)
+            {
+                dataModel = GetDataModelFromFile(fileNamePath, separator);
+
+                _log.LogInformation("Transforming data finished.");
+            }
+
+            await _fileSystem.SaveDataAsync(dataModel, fileNamePath);
+
+            return fileName;
+
+        }
+
+        public Task<IEnumerable<OutputModel>> CountDataAsync(string fileNamePath)
+        {
+            _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);
+            var separator = new char[0];
+            List<DataModel> dataModel;
+            IEnumerable<OutputModel> outputModel;
             string fileName = string.Empty;
 
             try
             {
                 lock (this)
                 {
-                    using (FileStream fs = File.Open(fileNamePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    {
-                        fileName = fs.Name;
-                        using (BufferedStream bs = new BufferedStream(fs))
-                        using (StreamReader sr = new StreamReader(bs))
-                        {
-                            string line;
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                var columns = line.Split(separator);
-
-                                string domain_code = columns[0];
-                                string page_title = columns[1];
-                                if (int.TryParse(columns[2], out int count_views) == false)
-                                {
-                                    foreach (var item in columns)
-                                    {
-                                        if (int.TryParse(item, out count_views))
-                                            break;
-                                    }
-                                }
-
-                                containedData.Add(new ContainedDataModel()
-                                {
-                                    domain_code = domain_code,
-                                    page_title = page_title,
-                                    count_views = count_views
-                                });
-                            }
-                        }
-                    }
-
-                    preResultData = GroupByCountData(containedData);
+                    dataModel = GetDataModelFromFile(fileNamePath, separator);
 
                     _log.LogInformation("Transforming data finished.");
                 }
 
-                await _fileSystem.SaveDataAsync(preResultData, fileName);
+                var resultGroupByCount = GroupByCountData(dataModel);
+                var resultGroupByMax = GroupByMaxData(resultGroupByCount);
+
+                outputModel = from r in resultGroupByMax
+                              join g in resultGroupByCount on new { r.domain_code, r.count } equals new { g.domain_code, g.count }
+                              select new OutputModel
+                              {
+                                  domain_code = r.domain_code,
+                                  page_title = g.page_title,
+                                  max_count_views = r.count
+                              };
             }
             finally
             {
                 GC.Collect();
             }
-            
-            return fileName;
-           
+
+            return Task.Run(() =>
+            {
+                return outputModel;
+            });
         }
 
-        public void TransformDataIntoDataTable(out DataTable resultDataTable)
+        private static List<DataModel> GetDataModelFromFile(string fileNamePath, char[] separator)
         {
-            _log.LogInformation("Transforming Data");
-            string fileDownloadPath = GeneralHelper.GetDownloadedFilesPath(_config);
-            string resultFilePath = GeneralHelper.GetResultFilePath(_config);
-            string resultFileNamePath = FileParserHelper.CombineMultipleTextFiles(fileDownloadPath, resultFilePath, "output.txt", true);
-            resultDataTable = FileParserHelper.ConvertToDataTable(resultFileNamePath, 4, ' ');
-            _log.LogInformation("Transformed.");
+            List<DataModel> dataModel = new();
+            //string fileName;
+            try
+            {
+                using (FileStream fs = File.Open(fileNamePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    //fileName = fs.Name;
+                    using (BufferedStream bs = new BufferedStream(fs))
+                    using (StreamReader sr = new StreamReader(bs))
+                    {
+                        string line;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            var columns = line.Split(separator);
+
+                            string domain_code = columns[0];
+                            string page_title = columns[1];
+
+                            dataModel.Add(new DataModel()
+                            {
+                                domain_code = domain_code,
+                                page_title = page_title
+                            });
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                GC.Collect();
+            }
+
+            return dataModel;
         }
 
-        private IEnumerable<ContainedDataModel> GroupByCountData(List<ContainedDataModel> containedData)
+        private IEnumerable<ContainedDataModel> GroupByCountData(List<DataModel> dataModel)
         {
-            //return containedData
-            //    .GroupBy(c => new { c.domain_code, c.page_title })
-            //    //.Where(grp => grp.Count() > 1)
-            //    .Select(gb => new ContainedDataModel()
-            //    {
-            //        domain_code = gb.Key.domain_code,
-            //        page_title = gb.Key.page_title,
-            //        count_views = gb.Count()
-            //    });
-
-            return from e in containedData
+            return from e in dataModel
                    group e by new { e.domain_code, e.page_title } into gb
-                   //where gb.Count() > 1
                    select new ContainedDataModel
                    {
                        domain_code = gb.Key.domain_code,
                        page_title = gb.Key.page_title,
-                       count_views = gb.Count()
+                       count = gb.Count()
                    };
         }
 
-        private List<ContainedDataModel> GroupBySumData(List<ContainedDataModel> containedData)
+        private IEnumerable<ContainedDataModel> GroupByMaxData(IEnumerable<ContainedDataModel> containedData)
         {
             return containedData
-               .GroupBy(c => new { c.domain_code, c.page_title })
+               .GroupBy(c => new { c.domain_code })
                .Select(gb => new ContainedDataModel()
                {
                    domain_code = gb.Key.domain_code,
-                   page_title = gb.Key.page_title,
-                   count_views = gb.Sum(x => x.count_views)
-               }).ToList();
+                   count = gb.Max(x => x.count)
+               })
+               .OrderByDescending(i => i.count)
+               .Take(100);
         }
     }
 }

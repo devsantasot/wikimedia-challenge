@@ -16,46 +16,32 @@ namespace DS_ProgramingChallengeLibrary
     public class BusinessLogic : IBusinessLogic
     {
         private readonly ILogger<BusinessLogic> _log;
-        private readonly IConfiguration _config;
-        private readonly IDownloadHandler _downloadHandler;
-        private readonly IFileParser _fileParser;
-        private readonly IDecompressorHandler _decompressorHandler;
-        private readonly IUrlSystem _urlSystem;
-        private readonly IOutputResultParser _outputResultParser;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BusinessLogic(ILogger<BusinessLogic> log,
-                          IConfiguration config,
-                          IDownloadHandler downloadHandler,                          
-                          IFileParser fileParser,
-                          IDecompressorHandler decompressorHandler,
-                          IUrlSystem urlSystem, 
-                          IOutputResultParser outputResultParser)
+        public BusinessLogic(ILogger<BusinessLogic> log, IUnitOfWork unitOfWork)
         {
             _log = log;
-            _config = config;
-            _downloadHandler = downloadHandler;
-            _fileParser = fileParser;
-            _decompressorHandler = decompressorHandler;
-            _urlSystem = urlSystem;
-            _outputResultParser = outputResultParser;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task ProcesingAsync()
         {
-            var lastHoursRequest = _config.GetValue<int>("LastHoursRequest");
+            var lastHoursRequest = _unitOfWork.Configuration.GetValue<int>("LastHoursRequest");
             _log.LogInformation("Processing Data from the last {lastHoursRequest} hours...", lastHoursRequest);
 
             var settings = new ExecutionDataflowBlockOptions()
             {
-                MaxDegreeOfParallelism = 2,
+                MaxDegreeOfParallelism = 1,
             };
 
-            var listUrlDownloadBlock = new TransformManyBlock<int, DownloadRequestModel>(_urlSystem.GetUrlList, settings);
-            var downloadFilesBlock = new TransformBlock<DownloadRequestModel, string>(_downloadHandler.DownloadData, settings);
-            var decompressFileBlok = new TransformBlock<string, string>(_decompressorHandler.DecompressFile);
-            var fileParserBlock = new TransformBlock<string, string>(_fileParser.TransformDataAsync, settings);
+            var listUrlDownloadBlock = new TransformManyBlock<int, DownloadRequestModel>(_unitOfWork.UrlSystem.GetUrlList, settings);
+            var downloadFilesBlock = new TransformBlock<DownloadRequestModel, string>(_unitOfWork.DownloadHandler.DownloadData, settings);
+            var decompressFileBlok = new TransformBlock<string, string>(_unitOfWork.DecompressorHandler.DecompressFile);
+            var fileParserBlock = new TransformBlock<string, string>(_unitOfWork.FileParser.TransformDataAsync, settings);
             var batchBlock = new BatchBlock<string>(lastHoursRequest);
-            var outputBlock = new ActionBlock<IEnumerable<string>>(_outputResultParser.ShowResult, settings);
+            var unionFileParserBlock = new TransformBlock<IEnumerable<string>, string>(_unitOfWork.FileSystem.CombineMultipleTextFiles, settings);
+            var resultParserBlock = new TransformBlock<string, IEnumerable<OutputModel>>(_unitOfWork.FileParser.CountDataAsync, settings);
+            var outputBlock = new ActionBlock<IEnumerable<OutputModel>>(_unitOfWork.OutputResultParser.ShowResult, settings);
 
             DataflowLinkOptions linkOptions = new DataflowLinkOptions() { PropagateCompletion = true };
 
@@ -63,7 +49,9 @@ namespace DS_ProgramingChallengeLibrary
             downloadFilesBlock.LinkTo(decompressFileBlok, linkOptions);
             decompressFileBlok.LinkTo(fileParserBlock, linkOptions);
             fileParserBlock.LinkTo(batchBlock, linkOptions);
-            batchBlock.LinkTo(outputBlock, linkOptions);
+            batchBlock.LinkTo(unionFileParserBlock, linkOptions);
+            unionFileParserBlock.LinkTo(resultParserBlock, linkOptions);
+            resultParserBlock.LinkTo(outputBlock, linkOptions);
 
             await listUrlDownloadBlock.SendAsync(lastHoursRequest);
             listUrlDownloadBlock.Complete();

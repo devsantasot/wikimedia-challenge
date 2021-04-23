@@ -14,27 +14,12 @@ namespace DS_ProgramingChallengeLibrary
     public class DownloadHandler : IDownloadHandler
     {
         private readonly ILogger _log;
-        private readonly IConfiguration _config;
+        private readonly IUnitOfWork _unitOfWork;
 
         public DownloadHandler(ILogger<DownloadHandler> log, IConfiguration config)
         {
             _log = log;
             _config = config;
-        }
-
-        public void DownloadData(List<DownloadRequestModel> urls)
-        {
-            DateTime dateTimeFileName = DateTime.Now;
-            int lastHoursRequest = _config.GetValue<int>("LastHoursRequest");
-
-            var urlTasks = urls.Select((downloadInfo, index) =>
-            {
-                _log.LogInformation("Downloading Data from {uri} (chunk #{index}) ", downloadInfo.Address.AbsoluteUri, index);
-                return DownloadHelper.DownloadFileAsync(downloadInfo.Address, downloadInfo.FileNamePath);
-            });
-
-            Task.WaitAll(urlTasks.ToArray());
-            Console.WriteLine("Done.");
         }
 
         public string DownloadData(DownloadRequestModel downloadInfo)

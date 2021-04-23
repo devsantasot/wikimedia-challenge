@@ -24,7 +24,9 @@ namespace DS_ProgramingChallengeLibrary
             _config = config;
         }
 
-        public abstract Task SaveDataAsync(IEnumerable<ContainedDataModel> resultGroupBy, string fileNamePath);
+        public abstract string CombineMultipleTextFiles(IEnumerable<string> inputFiles);
+
+        public abstract Task SaveDataAsync(IEnumerable<DataModel> resultGroupBy, string fileNamePath);
         
     }
 }
