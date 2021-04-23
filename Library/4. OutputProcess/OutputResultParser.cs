@@ -1,14 +1,10 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DS_ProgramingChallengeLibrary.Helpers;
 using DS_ProgramingChallengeLibrary.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 
 
 namespace DS_ProgramingChallengeLibrary
@@ -27,12 +23,12 @@ namespace DS_ProgramingChallengeLibrary
 
         public void ShowResult(IEnumerable<OutputModel> obj)
         {
-            _log.LogInformation("Showing result");
+            _log.LogInformation("Showing results...");
             int index = 1;
             try
             {
                 PrintLine();
-                PrintRow("#","domain_code", "page_title", "max_ count_views");
+                PrintRow("#", "domain_code", "page_title", "max_ count_views");
                 PrintLine();
                 foreach (OutputModel item in obj)
                 {

@@ -1,9 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DS_ProgramingChallengeLibrary
 {
@@ -13,8 +8,8 @@ namespace DS_ProgramingChallengeLibrary
         IDownloadHandler DownloadHandler { get; }
         IUrlSystem UrlSystem { get; }
         IDecompressorHandler DecompressorHandler { get; }
-        IFileParser FileParser { get; }
+        IFileAnalysis FileParser { get; }
         IFileSystem FileSystem { get; }
-        IOutputResultParser OutputResultParser { get; }        
+        IOutputResultParser OutputResultParser { get; }
     }
 }

@@ -1,7 +1,4 @@
 ﻿using DS_ProgramingChallengeLibrary;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using System.Data;
 using System.Threading.Tasks;
 
 // This project use Dependency Injection, Serilog and Settings

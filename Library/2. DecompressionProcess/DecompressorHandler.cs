@@ -1,14 +1,7 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DS_ProgramingChallengeLibrary.Helpers;
+﻿using DS_ProgramingChallengeLibrary.Helpers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace DS_ProgramingChallengeLibrary
 {
@@ -39,7 +32,7 @@ namespace DS_ProgramingChallengeLibrary
 
             _log.LogInformation("Decompressing data: {0}", fileNamePath);
             DecompressHelper.DecompressFile(fileNamePath, out newFileNamePath);
-            _log.LogInformation("Decompressing data finished.");            
+            _log.LogInformation("Decompressing data finished.");
             return newFileNamePath;
         }
     }

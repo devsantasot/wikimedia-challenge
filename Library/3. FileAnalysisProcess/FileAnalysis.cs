@@ -1,28 +1,23 @@
 ﻿
+using DS_ProgramingChallengeLibrary.Models;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using DS_ProgramingChallengeLibrary.Helpers;
-using DS_ProgramingChallengeLibrary.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace DS_ProgramingChallengeLibrary
 {
-    public class FileParser : IFileParser
+    public class FileAnalysis : IFileAnalysis
     {
         private readonly ILogger _log;
-        private readonly IConfiguration _config;
         private readonly IFileSystem _fileSystem;
 
-        public FileParser(ILogger<FileParser> log, IConfiguration config, IFileSystem fileSystem)
+        public FileAnalysis(ILogger<FileAnalysis> log, IFileSystem fileSystem)
         {
             _log = log;
-            _config = config;
             _fileSystem = fileSystem;
         }
 
@@ -41,14 +36,11 @@ namespace DS_ProgramingChallengeLibrary
             }
 
             return _fileSystem.SaveDataAsync(dataModelSum, fileNamePath);
-
-            //return fileNamePath;
-
         }
 
-        public Task<IEnumerable<OutputModel>> CountDataAsync(string fileNamePath)
+        public Task<IEnumerable<OutputModel>> ProcessDataAsync(string fileNamePath)
         {
-            _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);
+            _log.LogInformation("Reading and processing final data: {fileNamePath}", fileNamePath);
             var separator = new char[0];
             List<DataModelSummary> dataModel;
             IEnumerable<OutputModel> outputModel;
@@ -59,20 +51,22 @@ namespace DS_ProgramingChallengeLibrary
                 {
                     dataModel = GetDataModelSumFromFile(fileNamePath, separator);
 
-                    _log.LogInformation("Transforming data finished.");
+                    _log.LogInformation("Reading data finished.");
                 }
 
-                var resultGroupByCount = GroupBySumData(dataModel);
-                var resultGroupByMax = GroupByMaxData(resultGroupByCount);
+                var resultGroupBySum = GroupBySumData(dataModel);
+                var resultGroupByMax = GroupByMaxData(resultGroupBySum);
 
                 outputModel = from r in resultGroupByMax
-                              join g in resultGroupByCount on new { r.domain_code, r.count_views } equals new { g.domain_code, g.count_views }
+                              join g in resultGroupBySum on new { r.domain_code, r.count_views } equals new { g.domain_code, g.count_views }
                               select new OutputModel
                               {
                                   domain_code = r.domain_code,
                                   page_title = g.page_title,
                                   max_count_views = r.count_views
                               };
+
+                _log.LogInformation("Processing data finished.");
             }
             finally
             {
@@ -133,13 +127,13 @@ namespace DS_ProgramingChallengeLibrary
         private List<DataModelSummary> GroupBySumData(List<DataModelSummary> dataModel)
         {
             return (from e in dataModel
-                   group e by new { e.domain_code, e.page_title } into gb
-                   select new DataModelSummary
-                   {
-                       domain_code = gb.Key.domain_code,
-                       page_title = gb.Key.page_title,
-                       count_views = gb.Sum(e => e.count_views)
-                   }).ToList();
+                    group e by new { e.domain_code, e.page_title } into gb
+                    select new DataModelSummary
+                    {
+                        domain_code = gb.Key.domain_code,
+                        page_title = gb.Key.page_title,
+                        count_views = gb.Sum(e => e.count_views)
+                    }).ToList();
         }
 
         private IEnumerable<DataModelSummary> GroupByMaxData(List<DataModelSummary> containedData)

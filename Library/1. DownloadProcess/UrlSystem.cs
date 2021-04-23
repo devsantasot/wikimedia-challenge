@@ -17,18 +17,6 @@ namespace DS_ProgramingChallengeLibrary
             _config = config;
         }
 
-        public List<DownloadRequestModel> GetUrlList(DateTime dateTimeFileName, int lastHoursRequest)
-        {
-            List<DownloadRequestModel> urls = new List<DownloadRequestModel>();
-
-            for (int fileHourIndex = 0; fileHourIndex < lastHoursRequest; fileHourIndex++)
-            {
-                urls.Add(BuildUrlRequest(dateTimeFileName, fileHourIndex));
-            }
-
-            return urls;
-        }
-
         public List<DownloadRequestModel> GetUrlList(int lastHoursRequest)
         {
             _log.LogInformation("Building Urls...");
@@ -43,6 +31,7 @@ namespace DS_ProgramingChallengeLibrary
             _log.LogInformation("Building Urls done.");
             return urls;
         }
+
         private DownloadRequestModel BuildUrlRequest(DateTime dateTimeFileName, int fileHourIndex)
         {
             string baseURL = _config.GetValue<string>("BaseURLDownload");

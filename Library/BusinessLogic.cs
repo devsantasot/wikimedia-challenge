@@ -1,13 +1,7 @@
-﻿using DS_ProgramingChallengeLibrary.Helpers;
-using DS_ProgramingChallengeLibrary.Models;
+﻿using DS_ProgramingChallengeLibrary.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 
@@ -40,7 +34,7 @@ namespace DS_ProgramingChallengeLibrary
             var fileParserBlock = new TransformBlock<string, string>(_unitOfWork.FileParser.TransformDataAsync, settings);
             var batchBlock = new BatchBlock<string>(lastHoursRequest);
             var unionFileParserBlock = new TransformBlock<IEnumerable<string>, string>(_unitOfWork.FileSystem.CombineMultipleTextFiles, settings);
-            var resultParserBlock = new TransformBlock<string, IEnumerable<OutputModel>>(_unitOfWork.FileParser.CountDataAsync, settings);
+            var resultParserBlock = new TransformBlock<string, IEnumerable<OutputModel>>(_unitOfWork.FileParser.ProcessDataAsync, settings);
             var outputBlock = new ActionBlock<IEnumerable<OutputModel>>(_unitOfWork.OutputResultParser.ShowResult, settings);
 
             DataflowLinkOptions linkOptions = new DataflowLinkOptions() { PropagateCompletion = true };

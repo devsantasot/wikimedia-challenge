@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="3. FileAnalysisProcess\FileSystemJson.cs" />
     <Compile Remove="ConsoleSpinner.cs" />
   </ItemGroup>
 

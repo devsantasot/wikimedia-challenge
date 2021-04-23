@@ -1,9 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DS_ProgramingChallengeLibrary
 {
@@ -11,7 +6,7 @@ namespace DS_ProgramingChallengeLibrary
     {
         public UnitOfWork(IConfiguration configuration,
                           IDownloadHandler downloadHandler,
-                          IFileParser fileParser,
+                          IFileAnalysis fileParser,
                           IFileSystem fileSystem,
                           IDecompressorHandler decompressorHandler,
                           IUrlSystem urlSystem,
@@ -34,7 +29,7 @@ namespace DS_ProgramingChallengeLibrary
 
         public IDecompressorHandler DecompressorHandler { get; private set; }
 
-        public IFileParser FileParser { get; private set; }
+        public IFileAnalysis FileParser { get; private set; }
 
         public IFileSystem FileSystem { get; private set; }
 

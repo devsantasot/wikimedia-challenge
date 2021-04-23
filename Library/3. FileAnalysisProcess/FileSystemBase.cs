@@ -1,15 +1,11 @@
-﻿using DS_ProgramingChallengeLibrary.Models;
+﻿using DS_ProgramingChallengeLibrary.Helpers;
+using DS_ProgramingChallengeLibrary.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.IO;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using DS_ProgramingChallengeLibrary.Helpers;
+using System.Threading.Tasks;
 
 namespace DS_ProgramingChallengeLibrary
 {
@@ -63,6 +59,6 @@ namespace DS_ProgramingChallengeLibrary
         }
 
         public abstract Task<string> SaveDataAsync(IEnumerable<DataModelSummary> resultGroupBy, string fileNamePath);
-        
+
     }
 }
