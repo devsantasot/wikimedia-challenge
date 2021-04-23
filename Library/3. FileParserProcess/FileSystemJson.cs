@@ -21,19 +21,14 @@ namespace DS_ProgramingChallengeLibrary
         {
         }
 
-        public override string CombineMultipleTextFiles(IEnumerable<string> inputFiles)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override async Task SaveDataAsync(IEnumerable<DataModel> resultGroupBy, string fileNamePath)
+        public override async Task<string> SaveDataAsync(IEnumerable<DataModelSummary> resultGroupBy, string fileNamePath)
         {
             string resultFilePath = GeneralHelper.GetResultFilePath(_config);
             string fileName = Path.GetFileName(fileNamePath);
             string resultFileNamePath = $"{resultFilePath}/{fileName}";
             try
             {
-                FileParserHelper.CreatePathIfNotExist(resultFilePath);
+                FileHelper.CreatePathIfNotExist(resultFilePath);
                 _log.LogInformation("Saving result data [json]: {fileNamePath}", resultFileNamePath);
 
                 using FileStream createStream = File.Create(resultFileNamePath);
@@ -43,6 +38,7 @@ namespace DS_ProgramingChallengeLibrary
             {
                 GC.Collect();
             }
+            return resultFileNamePath;
         }
     }
 }

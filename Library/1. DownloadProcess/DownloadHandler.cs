@@ -14,7 +14,7 @@ namespace DS_ProgramingChallengeLibrary
     public class DownloadHandler : IDownloadHandler
     {
         private readonly ILogger _log;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IConfiguration _config;
 
         public DownloadHandler(ILogger<DownloadHandler> log, IConfiguration config)
         {
@@ -24,7 +24,7 @@ namespace DS_ProgramingChallengeLibrary
 
         public string DownloadData(DownloadRequestModel downloadInfo)
         {
-            _log.LogInformation("Downloading from {address} to {location}", downloadInfo.Address, downloadInfo.FileNamePath);
+            _log.LogInformation("Downloading from {address} to {location}", downloadInfo.Address, downloadInfo.FileNamePath);            
             DownloadHelper.DownloadFile(downloadInfo.Address, downloadInfo.FileNamePath);
             _log.LogInformation("Download finished.");
             

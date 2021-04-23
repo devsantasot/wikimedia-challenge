@@ -8,35 +8,8 @@ using System.Threading.Tasks;
 
 namespace DS_ProgramingChallengeLibrary.Helpers
 {
-    public class FileParserHelper
+    public class FileHelper
     {
-        public static DataTable ConvertToDataTable(string filePath, int numberOfColumns, char separator)
-        {
-            DataTable tbl = new DataTable();
-
-            for (int col = 0; col < numberOfColumns; col++)
-                tbl.Columns.Add(new DataColumn("Column" + (col + 1).ToString()));
-
-
-            string[] lines = System.IO.File.ReadAllLines(filePath);
-
-            foreach (string line in lines)
-            {
-                var cols = line.Split(separator);
-
-                DataRow dr = tbl.NewRow();
-                for (int cIndex = 0; cIndex < 3; cIndex++)
-                {
-                    dr[cIndex] = cols[cIndex];
-                }
-
-                tbl.Rows.Add(dr);
-            }
-
-            return tbl;
-        }
-
-
         public static string CombineMultipleTextFiles(string mainPath, string resultPath = "", string resultNameFile = "output.txt", bool deleteOtherFiles = false)
         {
             string resultFileNamePath;
@@ -86,6 +59,20 @@ namespace DS_ProgramingChallengeLibrary.Helpers
             if (Directory.Exists(filePath) == false)
             {
                 Directory.CreateDirectory(filePath);
+            }
+        }
+
+        public static void DeleteAllFiles(string directoryPath)
+        {
+            DirectoryInfo di = new(directoryPath);
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.GetDirectories())
+            {
+                dir.Delete(true);
             }
         }
     }

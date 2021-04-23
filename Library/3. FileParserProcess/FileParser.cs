@@ -26,23 +26,23 @@ namespace DS_ProgramingChallengeLibrary
             _fileSystem = fileSystem;
         }
 
-        public async Task<string> TransformDataAsync(string fileNamePath)
+        public Task<string> TransformDataAsync(string fileNamePath)
         {
             _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);
             var separator = new char[0];
-            List<DataModel> dataModel;
-            string fileName = string.Empty;
+            List<DataModelSummary> dataModel;
+            List<DataModelSummary> dataModelSum;
 
             lock (this)
             {
-                dataModel = GetDataModelFromFile(fileNamePath, separator);
-
+                dataModel = GetDataModelSumFromFile(fileNamePath, separator);
+                dataModelSum = GroupBySumData(dataModel);
                 _log.LogInformation("Transforming data finished.");
             }
 
-            await _fileSystem.SaveDataAsync(dataModel, fileNamePath);
+            return _fileSystem.SaveDataAsync(dataModelSum, fileNamePath);
 
-            return fileName;
+            //return fileNamePath;
 
         }
 
@@ -50,29 +50,28 @@ namespace DS_ProgramingChallengeLibrary
         {
             _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);
             var separator = new char[0];
-            List<DataModel> dataModel;
+            List<DataModelSummary> dataModel;
             IEnumerable<OutputModel> outputModel;
-            string fileName = string.Empty;
 
             try
             {
                 lock (this)
                 {
-                    dataModel = GetDataModelFromFile(fileNamePath, separator);
+                    dataModel = GetDataModelSumFromFile(fileNamePath, separator);
 
                     _log.LogInformation("Transforming data finished.");
                 }
 
-                var resultGroupByCount = GroupByCountData(dataModel);
+                var resultGroupByCount = GroupBySumData(dataModel);
                 var resultGroupByMax = GroupByMaxData(resultGroupByCount);
 
                 outputModel = from r in resultGroupByMax
-                              join g in resultGroupByCount on new { r.domain_code, r.count } equals new { g.domain_code, g.count }
+                              join g in resultGroupByCount on new { r.domain_code, r.count_views } equals new { g.domain_code, g.count_views }
                               select new OutputModel
                               {
                                   domain_code = r.domain_code,
                                   page_title = g.page_title,
-                                  max_count_views = r.count
+                                  max_count_views = r.count_views
                               };
             }
             finally
@@ -86,15 +85,13 @@ namespace DS_ProgramingChallengeLibrary
             });
         }
 
-        private static List<DataModel> GetDataModelFromFile(string fileNamePath, char[] separator)
+        private List<DataModelSummary> GetDataModelSumFromFile(string fileNamePath, char[] separator)
         {
-            List<DataModel> dataModel = new();
-            //string fileName;
+            List<DataModelSummary> dataModel = new();
             try
             {
                 using (FileStream fs = File.Open(fileNamePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    //fileName = fs.Name;
                     using (BufferedStream bs = new BufferedStream(fs))
                     using (StreamReader sr = new StreamReader(bs))
                     {
@@ -106,10 +103,20 @@ namespace DS_ProgramingChallengeLibrary
                             string domain_code = columns[0];
                             string page_title = columns[1];
 
-                            dataModel.Add(new DataModel()
+                            if (int.TryParse(columns[2], out int count_views) == false)
+                            {
+                                foreach (var item in columns)
+                                {
+                                    if (int.TryParse(item, out count_views))
+                                        break;
+                                }
+                            }
+
+                            dataModel.Add(new DataModelSummary()
                             {
                                 domain_code = domain_code,
-                                page_title = page_title
+                                page_title = page_title,
+                                count_views = count_views
                             });
                         }
                     }
@@ -123,28 +130,28 @@ namespace DS_ProgramingChallengeLibrary
             return dataModel;
         }
 
-        private IEnumerable<ContainedDataModel> GroupByCountData(List<DataModel> dataModel)
+        private List<DataModelSummary> GroupBySumData(List<DataModelSummary> dataModel)
         {
-            return from e in dataModel
+            return (from e in dataModel
                    group e by new { e.domain_code, e.page_title } into gb
-                   select new ContainedDataModel
+                   select new DataModelSummary
                    {
                        domain_code = gb.Key.domain_code,
                        page_title = gb.Key.page_title,
-                       count = gb.Count()
-                   };
+                       count_views = gb.Sum(e => e.count_views)
+                   }).ToList();
         }
 
-        private IEnumerable<ContainedDataModel> GroupByMaxData(IEnumerable<ContainedDataModel> containedData)
+        private IEnumerable<DataModelSummary> GroupByMaxData(List<DataModelSummary> containedData)
         {
             return containedData
                .GroupBy(c => new { c.domain_code })
-               .Select(gb => new ContainedDataModel()
+               .Select(gb => new DataModelSummary()
                {
                    domain_code = gb.Key.domain_code,
-                   count = gb.Max(x => x.count)
+                   count_views = gb.Max(x => x.count_views)
                })
-               .OrderByDescending(i => i.count)
+               .OrderByDescending(i => i.count_views)
                .Take(100);
         }
     }

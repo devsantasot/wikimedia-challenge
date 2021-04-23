@@ -24,9 +24,45 @@ namespace DS_ProgramingChallengeLibrary
             _config = config;
         }
 
-        public abstract string CombineMultipleTextFiles(IEnumerable<string> inputFiles);
+        public string CombineMultipleTextFiles(IEnumerable<string> inputFiles)
+        {
+            const int chunkSize = 2 * 1024; // 2KB
+            string resultFilePath = GeneralHelper.GetResultFilePath(_config);
+            string fileName = "output.txt";
+            string resultFileNamePath = $"{resultFilePath}/{fileName}";
 
-        public abstract Task SaveDataAsync(IEnumerable<DataModel> resultGroupBy, string fileNamePath);
+            _log.LogInformation("Unifying files into {fileNamePath}", resultFileNamePath);
+
+            FileHelper.CreatePathIfNotExist(resultFilePath);
+            FileHelper.DeleteFileIfExist(resultFileNamePath);
+
+            try
+            {
+                using (var output = File.Create(resultFileNamePath))
+                {
+                    foreach (var file in inputFiles)
+                    {
+                        using (var input = File.OpenRead(file))
+                        {
+                            var buffer = new byte[chunkSize];
+                            int bytesRead;
+                            while ((bytesRead = input.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                output.Write(buffer, 0, bytesRead);
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                GC.Collect();
+            }
+
+            return resultFileNamePath;
+        }
+
+        public abstract Task<string> SaveDataAsync(IEnumerable<DataModelSummary> resultGroupBy, string fileNamePath);
         
     }
 }

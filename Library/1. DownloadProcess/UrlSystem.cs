@@ -48,14 +48,14 @@ namespace DS_ProgramingChallengeLibrary
             string baseURL = _config.GetValue<string>("BaseURLDownload");
             string fileRuteFormat = _config.GetValue<string>("FileRuteFormat");
             string fileNameFormat = _config.GetValue<string>("FileNameFormat");
-            string filePath = _config.GetValue<string>("FilesWorkspacePath");
+            string workspacePath = _config.GetValue<string>("FilesWorkspacePath");
             dateTimeFileName = dateTimeFileName.AddHours(-1 * fileHourIndex);
 
             DownloadRequestModel downloadRequestModel = new DownloadRequestModel();
 
             downloadRequestModel.FileName = dateTimeFileName.ToString(fileNameFormat);
             downloadRequestModel.Address = new Uri($"{baseURL}/{dateTimeFileName.ToString(fileRuteFormat)}/{downloadRequestModel.FileName}");
-            downloadRequestModel.FilesWorkspacePath = $"{(string.IsNullOrEmpty(filePath) ? AppContext.BaseDirectory : filePath)}/Pending";
+            downloadRequestModel.FilesWorkspacePath = $"{(string.IsNullOrEmpty(workspacePath) ? AppContext.BaseDirectory : workspacePath)}/Pending";
 
             if (Directory.Exists(downloadRequestModel.FilesWorkspacePath) == false)
             {
