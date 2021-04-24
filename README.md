@@ -25,15 +25,15 @@ _______________________________________________________________
 
 This command line application has the following capabilities: 
 
- 1. Download the file to workspace (local disk).
-    1.1. Get the URLs to download.
-    1.2. Download the resource.
- 2. Decompress the file  to workspace (local disk).
- 3. Process all data in a unify file.
-    3.1. Read the file and transform the data to reduce the size. 
-    3.2. Unify all processed files into one (máx 600MB).
-    3.3. Process all data using the unify file.
- 4. Print the result of the analysis.
+1. Download the file to workspace (local disk).
+* 1.1. Get the URLs to download.
+* 1.2. Download the resource.
+2. Decompress the file  to workspace (local disk).
+3. Process all data in a unify file.
+* 3.1. Read the file and transform the data to reduce the size. 
+* 3.2. Unify all processed files into one (máx 600MB).
+* 3.3. Process all data using the unify file.
+4. Print the result of the analysis.
  
  Author : Diego Santamaria Sotelo
  Date   : 24/04/2021
