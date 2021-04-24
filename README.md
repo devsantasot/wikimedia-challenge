@@ -4,6 +4,9 @@
 The main purpose of this project is to evaluate my skills in object-oriented programming and design.
 
 I've use TPL Dataflow in C# Net Core to processing specific pageviews for Wikipedia site provide by The Wikimedia Foundation.
+
+I would like to quote the text that accompanies the request:
+
 The pageviews can be downloaded in gzip format and are aggregated per hour per page. 
 Each hourly dump is approximately 50MB in gzipped text file and is somewhere between 100MB and 250MB in size unzipped.
 
@@ -59,7 +62,7 @@ FROM
 This command line application has the following capabilities: 
 
 1. Gets the download URLs built using the parameters specified in the <code>appsettings.json</code> file and then downloads the file to the workspace (local disk).
-2. Unzip the file to your workspace (local disk).
+2. Unzip the file to the workspace (local disk).
 3. Reads the unzipped file and processes it line by line to get a list of objects. These objects are filtered using linq statements to reduce the size of all data. The result is saved in a new file in the workspace (local disk). When all the files have been processed and saved in the workspace, the result is combined into a single file. Finally this file (smaller than the previous ones) is transformed into a list of objects that is used as a data source to execute new Linq statements.
 4. Finally, print the result of the analysis.
 
@@ -107,7 +110,7 @@ Also, Diagnostic Tool of Visual Studio shows the following results:
 ### Conclusions
 Acording to the previus results:
 1. The application takes about 4 minutes to process 5 downloaded files. This measure may vary depending on the download speed.
-2. It uses 3.8 GB of RAM. This measurement may vary depending on the size of the file that has been processed.
-
+2. In some parts of the process It uses 3.8 GB of RAM. This measurement may vary depending on the size of the file that has been processed.
+___
 * Author : Diego Santamaria Sotelo
 * Date   : 24/04/2021
