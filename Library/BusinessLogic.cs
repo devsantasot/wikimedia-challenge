@@ -9,13 +9,10 @@ namespace DS_ProgramingChallengeLibrary
 {
     /// <summary>
     /// I've use TPL Dataflow.
-    /// 1. Get the URLs to download.
-    /// 2. Download the file to workspace (local disk).
-    /// 3. Decompress the file  to workspace (local disk).
-    /// 4. Read the file and transform the data to reduce the size. 
-    /// 5. Unify all processed files into one.
-    /// 6. Process all data in the unify file.
-    /// 7. Print the result of the analysis.
+    /// 1. Download the file to workspace (local disk).
+    /// 2. Decompress the file  to workspace (local disk).
+    /// 3. Process all data in a unify file.
+    /// 4. Print the result of the analysis.
     /// </summary>
     public class BusinessLogic : IBusinessLogic
     {
@@ -43,7 +40,7 @@ namespace DS_ProgramingChallengeLibrary
             var decompressFileBlok = new TransformBlock<string, string>(_unitOfWork.DecompressorHandler.DecompressFile);
             var fileParserBlock = new TransformBlock<string, string>(_unitOfWork.TransformFileData.TransformDataAsync, settings);
             var batchBlock = new BatchBlock<string>(lastHoursRequest);
-            var unionFileParserBlock = new TransformBlock<IEnumerable<string>, string>(_unitOfWork.FileSystem.CombineMultipleTextFiles, settings);
+            var unionFilesBlock = new TransformBlock<IEnumerable<string>, string>(_unitOfWork.FileSystem.CombineMultipleTextFiles, settings);
             var resultParserBlock = new TransformBlock<string, IEnumerable<OutputModel>>(_unitOfWork.ProcessFileData.ProcessDataAsync, settings);
             var outputBlock = new ActionBlock<IEnumerable<OutputModel>>(_unitOfWork.OutputResultParser.ShowResult, settings);
 
@@ -53,8 +50,8 @@ namespace DS_ProgramingChallengeLibrary
             downloadFilesBlock.LinkTo(decompressFileBlok, linkOptions);
             decompressFileBlok.LinkTo(fileParserBlock, linkOptions);
             fileParserBlock.LinkTo(batchBlock, linkOptions);
-            batchBlock.LinkTo(unionFileParserBlock, linkOptions);
-            unionFileParserBlock.LinkTo(resultParserBlock, linkOptions);
+            batchBlock.LinkTo(unionFilesBlock, linkOptions);
+            unionFilesBlock.LinkTo(resultParserBlock, linkOptions);
             resultParserBlock.LinkTo(outputBlock, linkOptions);
 
             await listUrlDownloadBlock.SendAsync(lastHoursRequest);
