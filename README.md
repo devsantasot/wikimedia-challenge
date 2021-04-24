@@ -3,10 +3,11 @@
 
 The main purpose of this project is to evaluate my skills in object-oriented programming and design.
 
-I've use TPL Dataflow in C# Net Core to processing specific pageviews for Wikipedia site provide by The Wikimedia Foundation.
+I've use TPL Dataflow in C# Net Core to processing specific pageviews for Wikipedia site provide by The Wikimedia Foundation acording to the requirement explained below.
 
-I would like to quote the text that accompanies the request:
+### Requirement: 
 
+The Wikimedia Foundation provides all pageviews for Wikipedia site since 2015 in machine-readable format. 
 The pageviews can be downloaded in gzip format and are aggregated per hour per page. 
 Each hourly dump is approximately 50MB in gzipped text file and is somewhere between 100MB and 250MB in size unzipped.
 
@@ -14,7 +15,8 @@ Each hourly dump is approximately 50MB in gzipped text file and is somewhere bet
 * Sample file: https://dumps.wikimedia.org/other/pageviews/2015/2015-05/pageviews-20150501-010000.gz
 * Technical documentation: https://wikitech.wikimedia.org/wiki/Analytics/Data_Lake/Traffic/Pageviews
 
-### Requirements: 
+Create a command line application with following capabilities: 
+
 1. Do not use any relative database in your code.  
 2. Get data for last 5 hours.
 3. Calculate by the code the following SQL statement (ALL_HOURS table represent all files)
