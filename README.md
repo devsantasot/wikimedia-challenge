@@ -1,5 +1,5 @@
 # DS_ProgramingChallenge
-Diego Santamaria Programming Challenge 
+Diego Santamaria - Programming Challenge 
 
 The main purpose of this project is to evaluate my skills in object-oriented programming and design.
 
@@ -7,9 +7,9 @@ I've use TPL Dataflow in C# Net Core to processing specific pageviews for Wikipe
 The pageviews can be downloaded in gzip format and are aggregated per hour per page. 
 Each hourly dump is approximately 50MB in gzipped text file and is somewhere between 100MB and 250MB in size unzipped.
 
-File’s location: https://dumps.wikimedia.org/other/pageviews/
-Sample file: https://dumps.wikimedia.org/other/pageviews/2015/2015-05/pageviews-20150501-010000.gz
-Technical documentation: https://wikitech.wikimedia.org/wiki/Analytics/Data_Lake/Traffic/Pageviews
+* File’s location: https://dumps.wikimedia.org/other/pageviews/
+* Sample file: https://dumps.wikimedia.org/other/pageviews/2015/2015-05/pageviews-20150501-010000.gz
+* Technical documentation: https://wikitech.wikimedia.org/wiki/Analytics/Data_Lake/Traffic/Pageviews
 
 Requiriments: 
 1. Do not use any relative database in your code.  
@@ -35,5 +35,5 @@ This command line application has the following capabilities:
 * 3.3. Process all data using the unify file.
 4. Print the result of the analysis.
  
- Author : Diego Santamaria Sotelo
- Date   : 24/04/2021
+* Author : Diego Santamaria Sotelo
+* Date   : 24/04/2021
