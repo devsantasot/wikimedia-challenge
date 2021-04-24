@@ -5,7 +5,7 @@ The main purpose of this project is to evaluate my skills in object-oriented pro
 
 I've use TPL Dataflow in C# Net Core to processing specific pageviews for Wikipedia site provide by The Wikimedia Foundation acording to the requirement explained below.
 
-### Requirement: 
+## Requirement
 
 The Wikimedia Foundation provides all pageviews for Wikipedia site since 2015 in machine-readable format. 
 The pageviews can be downloaded in gzip format and are aggregated per hour per page. 
@@ -57,7 +57,7 @@ Output example:
 | en          | microsoft   | 1000             |
 | fr.m.d      | paris       | 500              |
 
-### How It Works
+## How It Works
 This command line application has the following capabilities: 
 
 1. Gets the download URLs built using the parameters specified in the <code>appsettings.json</code> file and then downloads the file to the workspace (local disk).
@@ -65,7 +65,7 @@ This command line application has the following capabilities:
 3. Reads the unzipped file and processes it line by line to get a list of objects. These objects are filtered using linq statements to reduce the size of all data. The result is saved in a new file in the workspace (local disk). When all the files have been processed and saved in the workspace, the result is combined into a single file. Finally this file (smaller than the previous ones) is transformed into a list of objects that is used as a data source to execute new Linq statements.
 4. Finally, print the result of the analysis.
 
-### Config
+## Config
 View of <code>appsettings.json</code>
 ```json
 {
@@ -93,11 +93,11 @@ View of <code>appsettings.json</code>
 5. <code>FilesWorkspacePath</code> node represents the directory of the workspace for the application.
 6. <code>Serilog</code> section represents the configuration for the Serilog tool.
 
-### Environment
+## Environment
 There are some restrictions, some of them to meet the first requirement (don't use any relative database in your code):
 1. At least 4 GB of RAM available.
 
-### Results
+## Results
 I've tested under correct internet conditions and this was the result:
 
 ![imagen](https://user-images.githubusercontent.com/21200741/115965594-99d5d980-a4ef-11eb-882d-a7b5d0b2fc5e.png)
@@ -106,7 +106,7 @@ Also, Diagnostic Tool of Visual Studio shows the following results:
 
 ![imagen](https://user-images.githubusercontent.com/21200741/115965664-ce499580-a4ef-11eb-895c-c4b61f226aa6.png)
 
-### Conclusions
+## Conclusions
 Acording to the previus results:
 1. The application takes about 4 minutes to process 5 downloaded files. This measure may vary depending on the download speed.
 2. In some parts of the process It uses 3.8 GB of RAM. This measurement may vary depending on the size of the file that has been processed.
