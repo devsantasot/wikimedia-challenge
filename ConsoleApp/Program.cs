@@ -10,7 +10,7 @@ namespace ConsoleApp
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
             // Initialize serilog logger
             ContainerConfig.ConfigureLogger();
@@ -27,13 +27,13 @@ namespace ConsoleApp
             {
                 Log.Information("Starting service");
                 await serviceProvider.GetService<IAppService>().RunAsync();
-                //Log.Information("Ending service");
-                //return 0;
+                Log.Information("Ending service");
+                return 0;
             }
             catch (Exception ex)
             {
                 Log.Fatal(ex, "Error running service");
-                //return 1;
+                return 1;
             }
             finally
             {

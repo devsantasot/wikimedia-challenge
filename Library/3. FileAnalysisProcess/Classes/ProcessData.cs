@@ -28,14 +28,16 @@ namespace DS_ProgramingChallengeLibrary
             {
                 lock (this)
                 {
+                    // Convert the file to an object for processing (with SUM statement)
                     dataModel = GetDataModelSumFromFile(fileNamePath, separator);
 
                     _log.LogInformation("Reading data finished. Processing data started...");
                 }
-
+                // Grouping and adding all the data obtained
                 var resultGroupBySum = GroupBySumData(dataModel).ToList();
+                // Get the maximum per domain (máx 100 results)
                 var resultGroupByMax = GroupByMaxData(resultGroupBySum).ToList();
-
+                // Finally, join and get the result (output Model)
                 outputModel = GetOutputModel(resultGroupBySum, resultGroupByMax);
 
                 _log.LogInformation("Processing data finished.");

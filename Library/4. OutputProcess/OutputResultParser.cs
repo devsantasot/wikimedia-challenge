@@ -41,7 +41,7 @@ namespace DS_ProgramingChallengeLibrary
             {
                 GC.Collect();
             }
-            Console.WriteLine("Press any key to finish...");
+            _log.LogInformation("Press any key to finish...");
             Console.ReadLine();
 
             string workspacePath = _config.GetValue<string>("FilesWorkspacePath");

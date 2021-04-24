@@ -1,6 +1,7 @@
 ﻿using DS_ProgramingChallengeLibrary.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
@@ -10,8 +11,13 @@ namespace DS_ProgramingChallengeLibrary
     /// <summary>
     /// I've use TPL Dataflow.
     /// 1. Download the file to workspace (local disk).
+    ///     1.1. Get the URLs to download.
+    ///     1.2. Download the resource.
     /// 2. Decompress the file  to workspace (local disk).
     /// 3. Process all data in a unify file.
+    ///     3.1. Read the file and transform the data to reduce the size. 
+    ///     3.2. Unify all processed files into one (máx 500MB).
+    ///     3.3. Process all data using the unify file.
     /// 4. Print the result of the analysis.
     /// </summary>
     public class BusinessLogic : IBusinessLogic
@@ -35,16 +41,16 @@ namespace DS_ProgramingChallengeLibrary
                 MaxDegreeOfParallelism = 1,
             };
 
-            var listUrlDownloadBlock = new TransformManyBlock<int, DownloadRequestModel>(_unitOfWork.UrlSystem.GetUrlList, settings);
-            var downloadFilesBlock = new TransformBlock<DownloadRequestModel, string>(_unitOfWork.DownloadHandler.DownloadData, settings);
-            var decompressFileBlok = new TransformBlock<string, string>(_unitOfWork.DecompressorHandler.DecompressFile);
-            var fileParserBlock = new TransformBlock<string, string>(_unitOfWork.TransformFileData.TransformDataAsync, settings);
-            var batchBlock = new BatchBlock<string>(lastHoursRequest);
-            var unionFilesBlock = new TransformBlock<IEnumerable<string>, string>(_unitOfWork.FileSystem.CombineMultipleTextFiles, settings);
-            var resultParserBlock = new TransformBlock<string, IEnumerable<OutputModel>>(_unitOfWork.ProcessFileData.ProcessDataAsync, settings);
-            var outputBlock = new ActionBlock<IEnumerable<OutputModel>>(_unitOfWork.OutputResultParser.ShowResult, settings);
+            TransformManyBlock<int, DownloadRequestModel> listUrlDownloadBlock = new(_unitOfWork.UrlSystem.GetUrlList, settings);
+            TransformBlock<DownloadRequestModel, string> downloadFilesBlock = new(_unitOfWork.DownloadHandler.DownloadData, settings);
+            TransformBlock<string, string> decompressFileBlok = new(_unitOfWork.DecompressorHandler.DecompressFile);
+            TransformBlock<string, string> fileParserBlock = new(_unitOfWork.TransformFileData.TransformDataAsync, settings);
+            BatchBlock<string> batchBlock = new(lastHoursRequest);
+            TransformBlock<IEnumerable<string>, string> unionFilesBlock = new(_unitOfWork.FileSystem.CombineMultipleTextFiles, settings);
+            TransformBlock<string, IEnumerable<OutputModel>> resultParserBlock = new(_unitOfWork.ProcessFileData.ProcessDataAsync, settings);
+            ActionBlock<IEnumerable<OutputModel>> outputBlock = new(_unitOfWork.OutputResultParser.ShowResult, settings);
 
-            DataflowLinkOptions linkOptions = new DataflowLinkOptions() { PropagateCompletion = true };
+            DataflowLinkOptions linkOptions = new() { PropagateCompletion = true };
 
             listUrlDownloadBlock.LinkTo(downloadFilesBlock, linkOptions);
             downloadFilesBlock.LinkTo(decompressFileBlok, linkOptions);
