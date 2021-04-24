@@ -1,5 +1,5 @@
-# DS_ProgramingChallenge
-Diego Santamaria - Programming Challenge 
+# Diego Santamaria - ProgramingChallenge
+## Description
 
 The main purpose of this project is to evaluate my skills in object-oriented programming and design.
 
@@ -11,7 +11,7 @@ Each hourly dump is approximately 50MB in gzipped text file and is somewhere bet
 * Sample file: https://dumps.wikimedia.org/other/pageviews/2015/2015-05/pageviews-20150501-010000.gz
 * Technical documentation: https://wikitech.wikimedia.org/wiki/Analytics/Data_Lake/Traffic/Pageviews
 
-Requiriments: 
+### Requirements: 
 1. Do not use any relative database in your code.  
 2. Get data for last 5 hours.
 3. Calculate by the code the following SQL statement (ALL_HOURS table represent all files)
@@ -23,17 +23,42 @@ _______________________________________________________________
 [Output Example.txt](https://github.com/dsantasot/DS_ProgramingChallenge/files/6369853/Output.Example.txt)
 _______________________________________________________________
 
+### How It Works
 This command line application has the following capabilities: 
 
-1. Download the file to workspace (local disk).
-* 1.1. Get the URLs to download.
-* 1.2. Download the resource.
-2. Decompress the file  to workspace (local disk).
-3. Process all data in a unify file.
-* 3.1. Read the file and transform the data to reduce the size. 
-* 3.2. Unify all processed files into one (máx 600MB).
-* 3.3. Process all data using the unify file.
-4. Print the result of the analysis.
- 
+1. Gets the download URLs built using the parameters specified in the <code>appsettings.json</code> file and then downloads the file to the workspace (local disk).
+2. Unzip the file to your workspace (local disk).
+3. Reads the unzipped file and processes it line by line to get a list of objects. These objects are filtered using linq statements to reduce the size of all data. The result is saved in a new file in the workspace (local disk). When all the files have been processed and saved in the workspace, the result is combined into a single file. Finally this file (smaller than the previous ones) is transformed into a list of objects that is used as a data source to execute new Linq statements.
+4. Finally, print the result of the analysis.
+
+### Config
+View of <code>appsettings.json</code>
+```json
+{
+  "LastHoursRequest": 5,
+  "BaseURLDownload": "https://dumps.wikimedia.org/other/pageviews",
+  "FileRuteFormat": "yyyy/yyyy-MM",
+  "FileNameFormat": "'pageviews'-yyyyMMdd-HH'0000.gz'",
+  "FilesWorkspacePath": "C:\\tmp",
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Information",
+        "System": "Warning"
+      }
+    }
+  }
+}
+```
+
+1. <code>LastHoursRequest</code> node represent the number of hours for the request. According to the requirement, it is 5 hours.
+2. <code>BaseURLDownload</code> node represents the base url for the request.
+3. <code>FileRuteFormat</code> node represents the expected format of the rute for the request.
+4. <code>FileNameFormat</code> node represents the expected format of the file for the request.
+5. <code>FilesWorkspacePath</code> node represents the directory of the workspace for the application.
+6. <code>Serilog</code> section represents the configuration for the Serilog tool.
+
+
 * Author : Diego Santamaria Sotelo
 * Date   : 24/04/2021
