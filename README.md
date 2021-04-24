@@ -44,7 +44,7 @@ FROM
 	ORDER BY C.MAX_COUNT_VIEWS DESC
 ) R
 ```
-[SQL statement.txt](https://github.com/dsantasot/DS_ProgramingChallenge/files/6369860/SQL.statement.txt)
+Output example: 
 
 | domain_code | page_title  | max_ count_views | 
 |-------------|:------------|-----------------:|
@@ -54,9 +54,6 @@ FROM
 | it.m        | bongur      | 2000             |
 | en          | microsoft   | 1000             |
 | fr.m.d      | paris       | 500              |
-
-[Output Example.txt](https://github.com/dsantasot/DS_ProgramingChallenge/files/6369853/Output.Example.txt)
-
 
 ### How It Works
 This command line application has the following capabilities: 
