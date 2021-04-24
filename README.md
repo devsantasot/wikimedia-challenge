@@ -20,7 +20,7 @@ _______________________________________________________________
 [SQL statement.txt](https://github.com/dsantasot/DS_ProgramingChallenge/files/6369860/SQL.statement.txt)
 _______________________________________________________________
 
-[Output Example.txt] (https://github.com/dsantasot/DS_ProgramingChallenge/files/6369853/Output.Example.txt)
+[Output Example.txt](https://github.com/dsantasot/DS_ProgramingChallenge/files/6369853/Output.Example.txt)
 _______________________________________________________________
 
 This command line application has the following capabilities: 
