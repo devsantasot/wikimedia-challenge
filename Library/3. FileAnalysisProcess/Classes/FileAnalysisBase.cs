@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DS_ProgramingChallengeLibrary
 {
-    public abstract class FileAnalysisBase
+    public class FileAnalysisBase
     {
         protected readonly ILogger _log;
         protected readonly IFileSystem _fileSystem;
@@ -21,7 +21,7 @@ namespace DS_ProgramingChallengeLibrary
             _fileSystem = fileSystem;
         }
 
-        internal List<DataModelSummary> GetDataModelSumFromFile(string fileNamePath, char[] separator)
+        internal static List<DataModelSummary> GetDataModelSumFromFile(string fileNamePath, char[] separator)
         {
             List<DataModelSummary> dataModel = new();
             try
@@ -66,19 +66,21 @@ namespace DS_ProgramingChallengeLibrary
             return dataModel;
         }
 
-        internal List<DataModelSummary> GroupBySumData(List<DataModelSummary> dataModel)
+        internal static IEnumerable<DataModelSummary> GroupBySumData(IEnumerable<DataModelSummary> dataModel)
         {
             return (from e in dataModel
                     group e by new { e.domain_code, e.page_title } into gb
+                    where gb.Sum(e => e.count_views) > 1
                     select new DataModelSummary
                     {
                         domain_code = gb.Key.domain_code,
                         page_title = gb.Key.page_title,
                         count_views = gb.Sum(e => e.count_views)
-                    }).ToList();
+                    })
+                    ;
         }
 
-        internal IEnumerable<DataModelSummary> GroupByMaxData(List<DataModelSummary> containedData)
+        internal static IEnumerable<DataModelSummary> GroupByMaxData(IEnumerable<DataModelSummary> containedData)
         {
             return containedData
                .GroupBy(c => new { c.domain_code })
@@ -89,6 +91,18 @@ namespace DS_ProgramingChallengeLibrary
                })
                .OrderByDescending(i => i.count_views)
                .Take(100);
+        }
+
+        internal static IEnumerable<OutputModel> GetOutputModel(List<DataModelSummary> resultGroupBySum, List<DataModelSummary> resultGroupByMax)
+        {
+            return from r in resultGroupByMax
+                   join g in resultGroupBySum on new { r.domain_code, r.count_views } equals new { g.domain_code, g.count_views }
+                   select new OutputModel
+                   {
+                       domain_code = r.domain_code,
+                       page_title = g.page_title,
+                       max_count_views = r.count_views
+                   };
         }
     }
 }

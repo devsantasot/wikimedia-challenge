@@ -20,8 +20,8 @@ namespace DS_ProgramingChallengeLibrary
         {
             _log.LogInformation("Transforming data: {fileNamePath}", fileNamePath);
             var separator = new char[0];
-            List<DataModelSummary> dataModel;
-            List<DataModelSummary> dataModelSum;
+            IEnumerable<DataModelSummary> dataModel;
+            IEnumerable<DataModelSummary> dataModelSum;
 
             lock (this)
             {

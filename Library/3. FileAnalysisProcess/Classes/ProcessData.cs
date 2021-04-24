@@ -30,20 +30,13 @@ namespace DS_ProgramingChallengeLibrary
                 {
                     dataModel = GetDataModelSumFromFile(fileNamePath, separator);
 
-                    _log.LogInformation("Reading data finished.");
+                    _log.LogInformation("Reading data finished. Processing data started...");
                 }
 
-                var resultGroupBySum = GroupBySumData(dataModel);
-                var resultGroupByMax = GroupByMaxData(resultGroupBySum);
+                var resultGroupBySum = GroupBySumData(dataModel).ToList();
+                var resultGroupByMax = GroupByMaxData(resultGroupBySum).ToList();
 
-                outputModel = from r in resultGroupByMax
-                              join g in resultGroupBySum on new { r.domain_code, r.count_views } equals new { g.domain_code, g.count_views }
-                              select new OutputModel
-                              {
-                                  domain_code = r.domain_code,
-                                  page_title = g.page_title,
-                                  max_count_views = r.count_views
-                              };
+                outputModel = GetOutputModel(resultGroupBySum, resultGroupByMax);
 
                 _log.LogInformation("Processing data finished.");
             }
@@ -56,6 +49,7 @@ namespace DS_ProgramingChallengeLibrary
             {
                 return outputModel;
             });
-        }                
+        }
+
     }
 }
